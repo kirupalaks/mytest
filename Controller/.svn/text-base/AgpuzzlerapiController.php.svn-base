@@ -1,0 +1,815 @@
+<?php
+App::uses('CakeEmail', 'Network/Email');
+class AgpuzzlerapiController extends AppController {
+
+	public $name = "Agpuzzlerapi";
+
+	public $uses = array('Student','Agpuzzlertoken','AgPuzzlerSubscription','Course','CourseLessonMap','Concept','StudentActivity',
+    'LessonElementMap','Lesson','Exercise','StudentExerciseAttempt','Slide','Question','Element','StudentConceptAttempt');
+
+  public function beforeFilter() {
+    parent::beforeFilter();
+   $this->Auth->allow('authorize_authenticate','authorize','authenticate','forgotpwd','getpuzzler','submit_answer');
+ }
+
+public function authorize_authenticate(){
+   $this->autoRender = false;   
+    if($this->request->is("post")) {
+      $this->layout ="default";      
+      if(isset($_POST['user_id']) && $_POST['user_id'] != ""){
+        $user_id = $_POST['user_id'];
+        $password = $_POST['password'];
+        $token = $this->authorize($user_id,$password);        
+        if($token == Configure::read('msg.Token_Created') || $token == Configure::read('msg.Token_Exist')){
+          $student = $this->Student->findByUserId($user_id);      
+           $tokenexist = $this->Agpuzzlertoken->find("first",array('conditions'=>array('Agpuzzlertoken.STUDENT_ID' => $student['Student']['id'])));
+                 $auth = $this->authenticate($tokenexist['Agpuzzlertoken']['STUDENT_ID']);
+                 if($auth == Configure::read('msg.Subscribed')){
+                     $subscription = $this->AgPuzzlerSubscription->find("first",array(
+                    'conditions' => array('AgPuzzlerSubscription.student_id' => $tokenexist['Agpuzzlertoken']['STUDENT_ID'])));        
+              if(!empty($subscription))
+               {
+                $substartdate = date($subscription['AgPuzzlerSubscription']['SUBSCRIPTION_DATE']);
+                 $subperiod = $subscription['AgPuzzlerSubscription']['SUBSCRIPTION_PERIOD']-1;
+                $subenddate = date("Y-m-d",strtotime('+'.$subperiod.' weeks', strtotime($substartdate)));
+                $weekStartDate = date('Y-m-d',strtotime("last Monday", strtotime($substartdate)));        
+                $weekEndDate = date('Y-m-d',strtotime("next Sunday", strtotime($subenddate)));        
+                $cours = $this->Course->findById($subscription['AgPuzzlerSubscription']['COURSE_ID']);
+                $subscription['AgPuzzlerSubscription']['end_date'] = $weekEndDate;        
+                $cours = $this->Course->findById($subscription['AgPuzzlerSubscription']['COURSE_ID']);                
+              // $coures['AhaforWeek'] = $cours;                  
+              $con = array(
+               'CourseLessonMap.course_id' => $cours['Course']['id'],
+               'CourseLessonMap.deleted' => 0
+              );
+              $course_id = $cours['Course']['id'];            
+                $course_lesson = $this->CourseLessonMap->query("select * from course_lesson_map where course_id=$course_id and published = 1 and deleted = 0 and srno!=0 order by srno;");
+             if(empty($course_lesson)){
+                $course_lesson = $this->CourseLessonMap->query("select * from course_lesson_map where course_id=$course_id and published = 1 and deleted = 0 order by published_date;");}      
+                 if(!empty($course_lesson))
+                 {
+                    $j=0;$i=0;
+                    foreach($course_lesson as $lessons)
+                     {
+                        $lesson = $this->Lesson->find("first",array('conditions' => 
+                        array('Lesson.id' => $lessons['course_lesson_map']['lesson_id'],
+                               'Lesson.start_date <=' => date("Y-m-d", strtotime(date("Y-m-d")." +1 day")),
+                              'Lesson.end_date >='=> date("Y-m-d", strtotime(date("Y-m-d"))),
+                              'Lesson.start_date >=' => $weekStartDate,
+                              'Lesson.end_date <='=> $weekEndDate,
+                        'Lesson.deleted' => 0)));                         
+                                                        
+                   if(!empty($lesson)){
+                    $lesson_element = $this->LessonElementMap->find("all",array('conditions' => 
+                          array('LessonElementMap.lesson_id' => $lesson['Lesson']['id'],
+                            'LessonElementMap.deleted' => 0)));   
+                    if(!empty($lesson_element)){                               
+                      $now = new DateTime();
+                      $now->format('Y-m-d H:i:s');              
+                      $start_date  =date_create(date("Y-m-d H:i:s"));                            
+                      $end_date = date_create($lesson['Lesson']['end_date']);              
+                      $diff= date_diff($end_date, $start_date);
+
+                      //accesing days
+                      $days = $diff->d;                                                           
+                      $lesson['Lesson']['day_count'] = $days + 1;
+                        $lesson['Lesson']['skip'] = 1;       
+                        $lessonvalid = $this->Lesson->find("first",array('conditions' => 
+                            array('Lesson.id' => $lesson_element[0]['LessonElementMap']['lesson_id'],
+                                  'Lesson.start_date <=' => date("Y-m-d", strtotime(date("Y-m-d")." +1 day")),
+                                'Lesson.end_date >'=> date("Y-m-d", strtotime(date("Y-m-d"))),
+                          'Lesson.deleted' => 0)));       
+                           if(!empty($lessonvalid))
+                            $lesson['Lesson']['thisweek'] = 1;        
+                          else
+                            $lesson['Lesson']['thisweek'] = 0; 
+
+                       $puzzler[$i] = $lesson;                       
+                      $i++;
+                      }                      
+                      }}
+                  }
+                }             
+                 if($i == 0)
+                  echo json_encode(array("status" => Configure::read('status.success'),
+                          "msg"=> Configure::read('msg.No_Puzzler'),"token" => $tokenexist['Agpuzzlertoken']['TOKEN']));                   
+               else                
+                 echo json_encode(array("status" => Configure::read('status.success'),
+                    "msg"=> Configure::read('msg.Subscribed'),"puzzler"=> $puzzler,"token" => $tokenexist['Agpuzzlertoken']['TOKEN']));    
+                }
+                elseif($auth == Configure::read('msg.Subscription_Expired'))
+                  echo json_encode(array("status" => Configure::read('status.success'),
+                    "msg"=> Configure::read('msg.Subscription_Expired'),"token" => $tokenexist['Agpuzzlertoken']['TOKEN'])); 
+                elseif($auth == Configure::read('msg.Not_Subscribed'))
+                  echo json_encode(array("status" => Configure::read('status.success'),
+                    "msg"=> Configure::read('msg.Not_Subscribed'),"token" => $tokenexist['Agpuzzlertoken']['TOKEN']));       
+        }
+        else if($token == Configure::read('msg.Invalid_Password'))
+          echo json_encode(array("status" => Configure::read('status.error'),"msg" => Configure::read('msg.Invalid_Password')));
+        else if($token == Configure::read('msg.No_User'))
+            echo json_encode(array("status" => Configure::read('status.error'),"msg" => Configure::read('msg.No_User')));                           
+      }       
+      else if(isset($_POST['token']) && $_POST['token'] != ""){   
+        $token = urlencode($_POST['token']);        
+           $tokenexist = $this->Agpuzzlertoken->find("first",array('conditions'=>array('Agpuzzlertoken.TOKEN' => $token)));
+           if(!empty($tokenexist)){
+                 $auth = $this->authenticate($tokenexist['Agpuzzlertoken']['STUDENT_ID']);
+                 if($auth == Configure::read('msg.Subscribed')){
+                
+ $subscription = $this->AgPuzzlerSubscription->find("first",array(
+                    'conditions' => array('AgPuzzlerSubscription.student_id' => $tokenexist['Agpuzzlertoken']['STUDENT_ID'])));        
+              if(!empty($subscription))
+               {
+                $substartdate = date($subscription['AgPuzzlerSubscription']['SUBSCRIPTION_DATE']);
+                 $subperiod = $subscription['AgPuzzlerSubscription']['SUBSCRIPTION_PERIOD']-1;
+                $subenddate = date("Y-m-d",strtotime('+'.$subperiod.' weeks', strtotime($substartdate)));
+                $weekStartDate = date('Y-m-d',strtotime("last Monday", strtotime($substartdate)));        
+                $weekEndDate = date('Y-m-d',strtotime("next Sunday", strtotime($subenddate)));        
+                $cours = $this->Course->findById($subscription['AgPuzzlerSubscription']['COURSE_ID']);
+                $subscription['AgPuzzlerSubscription']['end_date'] = $weekEndDate;        
+                $cours = $this->Course->findById($subscription['AgPuzzlerSubscription']['COURSE_ID']);                
+              // $coures['AhaforWeek'] = $cours;                  
+              $con = array(
+               'CourseLessonMap.course_id' => $cours['Course']['id'],
+               'CourseLessonMap.deleted' => 0
+              );
+              $course_id = $cours['Course']['id'];            
+                $course_lesson = $this->CourseLessonMap->query("select * from course_lesson_map where course_id=$course_id and published = 1 and deleted = 0 and srno!=0 order by srno;");
+             if(empty($course_lesson)){
+                $course_lesson = $this->CourseLessonMap->query("select * from course_lesson_map where course_id=$course_id and published = 1 and deleted = 0 order by published_date;");}      
+                 if(!empty($course_lesson))
+                 {
+                    $j=0;$i=0;
+                    foreach($course_lesson as $lessons)
+                     {
+                        $lesson = $this->Lesson->find("first",array('conditions' => 
+                        array('Lesson.id' => $lessons['course_lesson_map']['lesson_id'],
+                               'Lesson.start_date <=' => date("Y-m-d", strtotime(date("Y-m-d")." +1 day")),
+                              'Lesson.end_date >='=> date("Y-m-d", strtotime(date("Y-m-d"))),
+                              'Lesson.start_date >=' => $weekStartDate,
+                              'Lesson.end_date <='=> $weekEndDate,
+                        'Lesson.deleted' => 0)));                         
+                                                        
+                   if(!empty($lesson)){
+                    $lesson_element = $this->LessonElementMap->find("all",array('conditions' => 
+                          array('LessonElementMap.lesson_id' => $lesson['Lesson']['id'],
+                            'LessonElementMap.deleted' => 0)));   
+                    if(!empty($lesson_element)){                               
+                      $now = new DateTime();
+                      $now->format('Y-m-d H:i:s');              
+                      $start_date  =date_create(date("Y-m-d H:i:s"));                            
+                      $end_date = date_create($lesson['Lesson']['end_date']);              
+                      $diff= date_diff($end_date, $start_date);
+
+                      //accesing days
+                      $days = $diff->d;                                                           
+                      $lesson['Lesson']['day_count'] = $days + 1;
+                        $lesson['Lesson']['skip'] = 1;       
+                        $lessonvalid = $this->Lesson->find("first",array('conditions' => 
+                            array('Lesson.id' => $lesson_element[0]['LessonElementMap']['lesson_id'],
+                                  'Lesson.start_date <=' => date("Y-m-d", strtotime(date("Y-m-d")." +1 day")),
+                                'Lesson.end_date >'=> date("Y-m-d", strtotime(date("Y-m-d"))),
+                          'Lesson.deleted' => 0)));       
+                           if(!empty($lessonvalid))
+                            $lesson['Lesson']['thisweek'] = 1;        
+                          else
+                            $lesson['Lesson']['thisweek'] = 0; 
+
+                       $puzzler[$i] = $lesson;                       
+                      $i++;
+                      }                      
+                      }}
+                  }
+                }             
+                if($i == 0)
+                  echo json_encode(array("status" => Configure::read('status.success'),
+                          "msg"=> Configure::read('msg.No_Puzzler'),"token" => $tokenexist['Agpuzzlertoken']['TOKEN']));                   
+               else                
+                  echo json_encode(array("status" => Configure::read('status.success'),
+                    "msg"=> Configure::read('msg.Subscribed'),"puzzler"=> $puzzler,"token" => $tokenexist['Agpuzzlertoken']['TOKEN']));    
+                }
+                elseif($auth == Configure::read('msg.Subscription_Expired'))
+                  echo json_encode(array("status" => Configure::read('status.success'),
+                    "msg"=> Configure::read('msg.Subscription_Expired'),"token" => $tokenexist['Agpuzzlertoken']['TOKEN'])); 
+                elseif($auth == Configure::read('msg.Not_Subscribed'))
+                  echo json_encode(array("status" => Configure::read('status.success'),
+                    "msg"=> Configure::read('msg.Not_Subscribed'),"token" => $tokenexist['Agpuzzlertoken']['TOKEN'])); 
+          }
+      else{
+           echo json_encode(array("status" => Configure::read('status.error'),              
+              "msg" => Configure::read('msg.Invalid_Token'),"token" => $token)); 
+      }
+    }
+  }
+}
+
+public function authorize($user_id,$password){      
+      $student = $this->Student->findByUserId($user_id);      
+      $keys=$student['Student']['name'];
+      if($student['Student'] != null){
+        if(strtolower($student['Student']['password']) == strtolower($password) && $student['Student']['deleted'] == 0) {                    
+       $encrypted = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($keys), $user_id, MCRYPT_MODE_CBC, md5(md5($keys))));
+          $token = urlencode($encrypted);          
+         $token_data = array(
+          'STUDENT_ID' => $student['Student']['id'],
+          'TOKEN' => $token
+          );        
+         $token_table = $this->Agpuzzlertoken->find("first",array('conditions'=>array('Agpuzzlertoken.STUDENT_ID' => $student['Student']['id'])));         
+          if(empty($token_table)){
+            $tokensaved = $this->Agpuzzlertoken->save($token_data);               
+          return Configure::read('msg.Token_Created');
+        }
+        else
+          return Configure::read('msg.Token_Exist');
+        }
+        else
+          return Configure::read('msg.Invalid_Password');
+      }
+      else
+          return Configure::read('msg.No_User');
+}
+
+public function authenticate($id){
+   $student = $this->Student->findById($id);      
+          $puzzsub = $this->AgPuzzlerSubscription->find("first",array('conditions'=>
+            array("AgPuzzlerSubscription.STUDENT_ID" => $student['Student']['id'])));       
+          if(!empty($puzzsub)){
+            $substartdate = date($puzzsub['AgPuzzlerSubscription']['SUBSCRIPTION_DATE']);
+            $subperiod = $puzzsub['AgPuzzlerSubscription']['SUBSCRIPTION_PERIOD']-1;
+            $subenddate = date("Y-m-d",strtotime('+'.$subperiod.' weeks', strtotime($substartdate)));                       
+            if($subenddate >= date("Y-m-d", strtotime(date("Y-m-d")." +1 day"))){                  
+              return Configure::read('msg.Subscribed');
+          }
+          else if($subenddate < date("Y-m-d", strtotime(date("Y-m-d")." +1 day")))
+             return Configure::read('msg.Subscription_Expired');
+        }
+          else
+            return Configure::read('msg.Not_Subscribed');
+}
+
+public function forgotpwd(){
+   $this->autoRender = false;   
+   if($this->request->is("post")) {
+    $this->layout ="default";
+    // $token = urlencode($_POST['token']); 
+    // $tokenexist = $this->Agpuzzlertoken->find("first",array('conditions'=>array('Agpuzzlertoken.TOKEN' => $token)));
+    if(isset($_POST['user_id']) && $_POST['user_id'] != ''){
+      $user_id = trim($_POST['user_id']);
+       $student = $this->Student->find("first",array('conditions'=>array('Student.user_id'=>
+        $user_id,'Student.deleted'=>0)));      
+       if(!empty($student)){
+       if($student['Student']['email'] != ""){
+        $rawstr = "Dear names,<br>
+              <p>Hello from AhaGuru,</p>
+              <p>You account has been accessed without a valid password.  Please use the following login and password to access your account.</p>
+              <p>Your user name: email</p>
+              <p>Your password : pwd</p><br><br>
+              <p>All the best and Have a great Day!</p>
+              <p>Thanks & Regards</p>
+              <p>AHAGURU</p>
+              <p>www.ahaguru.com</p>
+              <p>+91-96001 00090</p>";
+      $placeholders=array('names','email','pwd');
+     $string=array($student['Student']['name'],$student['Student']['email'],$student['Student']['password']);
+     $rawstr = str_replace($placeholders, $string, $rawstr);     
+      $this->sendEmail($student['Student']['email'],null, 'Ahaguru: Password',$rawstr,null);      
+      echo json_encode(array("status" => Configure::read('status.success'),"msg" =>  Configure::read('msg.Email_Sent')));
+    }
+    else
+    echo json_encode(array("status" => Configure::read('status.error'),"msg" =>  Configure::read('msg.No_Email')));                           
+    }
+    else
+    echo json_encode(array("status" => Configure::read('status.error'),"msg" =>  Configure::read('msg.UserId_NotReg')));                           
+     }
+     else
+        echo json_encode(array("status" => Configure::read('status.error'),"msg" => Configure::read('msg.UserId_Missing')));   
+   }
+ }
+
+ public function getpuzzler(){
+   $this->autoRender = false;   
+  $isMobileAttempt = true;
+  // error_log("post".print_r($_POST,true));
+   if($_POST['token'] != ""){   
+     $puzzler= array();$lesson =  array();
+        $token = urlencode($_POST['token']);        
+        $tokenexist = $this->Agpuzzlertoken->find("first",array('conditions'=>
+          array('Agpuzzlertoken.TOKEN' => $token)));
+        if(!empty($tokenexist)){
+          $user = $this->Student->findById($tokenexist['Agpuzzlertoken']['STUDENT_ID']);
+          $studentid = $user['Student']['id'];
+          $auth = $this->authenticate($tokenexist['Agpuzzlertoken']['STUDENT_ID']);
+            if($auth == Configure::read('msg.Subscribed')){
+                   $subscription = $this->AgPuzzlerSubscription->find("first",array(
+                    'conditions' => array('AgPuzzlerSubscription.student_id' => $tokenexist['Agpuzzlertoken']['STUDENT_ID'])));        
+              if(!empty($subscription))
+               {
+                $substartdate = date($subscription['AgPuzzlerSubscription']['SUBSCRIPTION_DATE']);
+                 $subperiod = $subscription['AgPuzzlerSubscription']['SUBSCRIPTION_PERIOD']-1;
+                $subenddate = date("Y-m-d",strtotime('+'.$subperiod.' weeks', strtotime($substartdate)));
+                $weekStartDate = date('Y-m-d',strtotime("last Monday", strtotime($substartdate)));        
+                $weekEndDate = date('Y-m-d',strtotime("next Sunday", strtotime($subenddate)));        
+                $cours = $this->Course->findById($subscription['AgPuzzlerSubscription']['COURSE_ID']);
+                $subscription['AgPuzzlerSubscription']['end_date'] = $weekEndDate;        
+                $cours = $this->Course->findById($subscription['AgPuzzlerSubscription']['COURSE_ID']);                
+              // $coures['AhaforWeek'] = $cours;                  
+              $con = array(
+               'CourseLessonMap.course_id' => $cours['Course']['id'],
+               'CourseLessonMap.deleted' => 0
+              );
+              $course_id = $cours['Course']['id'];            
+                $course_lesson = $this->CourseLessonMap->query("select * from course_lesson_map where course_id=$course_id and published = 1 and deleted = 0 and srno!=0 order by srno;");
+             if(empty($course_lesson)){
+                $course_lesson = $this->CourseLessonMap->query("select * from course_lesson_map where course_id=$course_id and published = 1 and deleted = 0 order by published_date;");}      
+                 if(!empty($course_lesson))
+                 {
+                    $j=0;$i=0;
+                    foreach($course_lesson as $lessons)
+                     {
+                        $lesson = $this->Lesson->find("first",array('conditions' => 
+                        array('Lesson.id' => $lessons['course_lesson_map']['lesson_id'],
+                               'Lesson.start_date <=' => date("Y-m-d", strtotime(date("Y-m-d")." +1 day")),
+                              'Lesson.end_date >='=> date("Y-m-d", strtotime(date("Y-m-d"))),
+                              'Lesson.start_date >=' => $weekStartDate,
+                              'Lesson.end_date <='=> $weekEndDate,
+                        'Lesson.deleted' => 0)));                         
+                                                        
+                   if(!empty($lesson)){
+                    $lesson_element = $this->LessonElementMap->find("all",array('conditions' => 
+                          array('LessonElementMap.lesson_id' => $lesson['Lesson']['id'],
+                            'LessonElementMap.deleted' => 0)));   
+                    if(!empty($lesson_element)){                               
+                      $now = new DateTime();
+                      $now->format('Y-m-d H:i:s');              
+                      $start_date  =date_create(date("Y-m-d H:i:s"));                            
+                      $end_date = date_create($lesson['Lesson']['end_date']);              
+                      $diff= date_diff($end_date, $start_date);
+
+                      //accesing days
+                      $days = $diff->d;                                                           
+                      $lesson['Lesson']['day_count'] = $days + 1;
+                        $lesson['Lesson']['skip'] = 1;       
+                        $lessonvalid = $this->Lesson->find("first",array('conditions' => 
+                            array('Lesson.id' => $lesson_element[0]['LessonElementMap']['lesson_id'],
+                                  'Lesson.start_date <=' => date("Y-m-d", strtotime(date("Y-m-d")." +1 day")),
+                                'Lesson.end_date >'=> date("Y-m-d", strtotime(date("Y-m-d"))),
+                          'Lesson.deleted' => 0)));       
+                           if(!empty($lessonvalid))
+                            $lesson['Lesson']['thisweek'] = 1;        
+                          else
+                            $lesson['Lesson']['thisweek'] = 0; 
+
+                                $ele=0;
+                                foreach ($lesson_element as $value) { 
+                                $images = array();                     
+                                  // if($value['LessonElementMap']['element_type'] == 2){                          
+                                  //  $cnpt =  $this->Concept->findById($value['LessonElementMap']['element_id']);                                         
+                                  //  if($cnpt['Concept']['slides'] != ""){
+                                  //   $id = $value['LessonElementMap']['element_id'];           
+                                  //     // error_log("hjgjgsddsds".print_r($lesson,true));
+                                  //   $lesson['element'][$ele] = $cnpt;
+                                  //   $conceptattempt = $this->StudentConceptAttempt->find("first",array('conditions' => array(
+                                  //     'StudentConceptAttempt.element_id' => $value['LessonElementMap']['element_id'],
+                                  //     'StudentConceptAttempt.student_id' => $user['Student']['id'],
+                                  //     'StudentConceptAttempt.status' => 2,
+                                  //     'StudentConceptAttempt.deleted' => 0)));
+                                  //   if(!empty($conceptattempt))
+                                  //     $lesson['element'][$ele]['attempt']  = $conceptattempt['StudentConceptAttempt']['status'];          
+                                  //   else
+                                  //     $lesson['element'][$ele]['attempt']  = 0;          
+                                  //   $lesson['element'][$ele]['element_type']  =2;        
+                                  //      // content 
+                                  // $attempts=$this->StudentConceptAttempt->query("select * from student_concept_attempt where element_id = $id and
+                                  //                              student_id = $studentid "); 
+                                  //  $type = 2;  $img = 0;
+                                  //   if(count($attempts) == 0){
+                                  //   $concept = $this->Concept->findById($id);
+                                  //   $elements= $this->LessonElementMap->query("select * from lesson_element_map where element_id = $id and element_type = 3;");
+                                  //   $slideids = explode(",",$concept['Concept']['slides']);
+                                  //   $concept['slide'] = array();
+                                  //    $type = 2;
+                                  //         foreach($slideids as $key => $slide){
+                                  //           $concept['slide'][$key] = $this->Slide->findById($slide);
+                                  //             if($concept['slide'][$key]['Slide']['slide_type'] == 1){                                                 
+                                  //               if(preg_match_all('/\.(gif|jpg|jpeg|tiff|png)$/i',$concept['slide'][$key]['Slide']['content'], $result)){                  
+                                  //                                   $images[$img] = $concept['slide'][$key]['Slide']['content'];
+                                  //                                 $img++;
+                                  //                               }
+                                  //                              }
+                                  //             if($concept['slide'][$key]['Slide']['slide_type'] == 5){
+                                  //                 $concept['slide'][$key]['Slide']['content'] =
+                                  //                   $this->Question->findById($concept['slide'][$key]['Slide']['content']);
+                                  //                   if(preg_match_all('/<img[^>]+>/i',$concept['slide'][$key]['Slide']['content']['Question']['question'], $result)){                  
+                                  //                                   $images[$img] = $result[0];                
+                                  //                                 $img++;
+                                  //                               }
+                                  //                         // $concept['slide'][$key]['Slide']['content']['Question']['question'] = htmlspecialchars($concept['slide'][$key]['Slide']['content']['Question']['question']);
+                                  //                               $concept['slide'][$key]['Slide']['content']['Question']['question'] = str_replace("'","&#39;",$exercise['slide'][$key]['Slide']['content']['Question']['question']);
+                                  //                               $concept['slide'][$key]['Slide']['content']['Question']['question'] = str_replace("-","&#45;",$exercise['slide'][$key]['Slide']['content']['Question']['question']);
+                                  //                          }
+                                  //                        }
+                                                         
+                                  //                        $concept['status'] = 0;
+                                  //                        $concept['last_visited'] = 1;
+                                                         
+                                  //                      }
+                                  //                      if(count($attempts) == 1 && $attempts[0]['student_concept_attempt']['status'] == 1) {
+                                  //                           $concept = $this->Concept->findById($id);
+                                  //                           $elements= $this->LessonElementMap->query("select * from lesson_element_map where element_id = $id and element_type = 3;");
+                                  //                           $slideids = explode(",",$concept['Concept']['slides']);
+                                  //                           $concept['last_visited'] = $attempts[0]['student_concept_attempt']['last_visited'];
+                                  //                           $concept['slide'] = array();
+                                  //                           $type = 2;
+                                  //                           foreach($slideids as $key => $slide){
+                                  //                               $concept['slide'][$key] = $this->Slide->findById($slide);
+                                  //                                 if($concept['slide'][$key]['Slide']['slide_type'] == 1){                                                 
+                                  //                                if(preg_match_all('/\.(gif|jpg|jpeg|tiff|png)$/i',$concept['slide'][$key]['Slide']['content'], $result)){                  
+                                  //                                   $images[$img] = $concept['slide'][$key]['Slide']['content'];
+                                  //                                 $img++;
+                                  //                               }
+                                  //                              }
+                                  //                               if($concept['slide'][$key]['Slide']['slide_type'] == 5){
+                                  //                                     $concept['slide'][$key]['Slide']['content'] =$this->Question->findById($concept['slide'][$key]['Slide']['content']);
+                                  //                                     if(preg_match_all('/<img[^>]+>/i',$concept['slide'][$key]['Slide']['content']['Question']['question'], $result)){                  
+                                  //                                   $images[$img] = $result[0];                
+                                  //                                 $img++;
+                                  //                               }
+                                  //                               // $concept['slide'][$key]['Slide']['content']['Question']['question'] = htmlspecialchars($concept['slide'][$key]['Slide']['content']['Question']['question']);
+                                  //                               $concept['slide'][$key]['Slide']['content']['Question']['question'] = str_replace("'","&#39;",$exercise['slide'][$key]['Slide']['content']['Question']['question']);
+                                  //                               $concept['slide'][$key]['Slide']['content']['Question']['question'] = str_replace("-","&#45;",$exercise['slide'][$key]['Slide']['content']['Question']['question']);
+                                  //                               }
+                                  //                           }
+                                  //                           $concept['status'] = $attempts[0]['student_concept_attempt']['status'];    
+                                  //                           $concept['answers'] = $attempts[0]['student_concept_attempt']['answers']; 
+                                  //                           $concept['last_visited'] = $attempts[0]['student_concept_attempt']['last_visited']; 
+                                  //                           $concept['slide_modified'] = $attempts[0]['student_concept_attempt']['slide_modified']; 
+                                  //                      }
+                                  //                      if(count($attempts) == 1 && $attempts[0]['student_concept_attempt']['status'] == 2){ 
+                                  //                            $concept = $this->Concept->findById($id);
+                                  //                            $concept['status'] = $attempts[0]['student_concept_attempt']['status'];
+                                  //                            $concept['last_visited'] = $attempts[0]['student_concept_attempt']['last_visited'];
+                                  //                            $concept['answers'] = $attempts[0]['student_concept_attempt']['answers'];
+                                  //                           $concept['slide_modified'] = $attempts[0]['student_concept_attempt']['slide_modified']; 
+                                  //                            $answers=explode("##",$concept['answers']);
+                                  //                            $question_ids = explode("@",$concept['answers']);
+                                  //                            $questions = array();
+                                  //                            for($j = 0; $j < count($question_ids) - 1; $j++) {
+                                  //                              $questions[$j] = $question_ids[$j];
+                                  //                              if($j != 0) {
+                                  //                                $question_ids[$j] = explode("##", $question_ids[$j]);
+                                  //                                $question_ids[$j] = isset($question_ids[$j][1]) == 1 ? $question_ids[$j][1] : 0;
+                                  //                              }
+                                  //                              $questions[$j] = $question_ids[$j];
+                                  //                            }
+                                  //                            $elements= $this->LessonElementMap->query("select * from lesson_element_map where element_id = $id and element_type = 3;");
+                                  //                            $slideids = explode(",",$concept['Concept']['slides']);
+                                  //                            $concept['slide'] = array();
+                                  //                            $type = 2;
+                                  //                            foreach($slideids as $key => $slide){
+                                  //                              $concept['slide'][$key] = $this->Slide->findById($slide);
+                                  //                                 if($concept['slide'][$key]['Slide']['slide_type'] == 1){                                                 
+                                  //                                 if(preg_match_all('/\.(gif|jpg|jpeg|tiff|png)$/i',$concept['slide'][$key]['Slide']['content'], $result)){                  
+                                  //                                   $images[$img] = $concept['slide'][$key]['Slide']['content'];
+                                  //                                 $img++;
+                                  //                               }
+                                  //                              }
+                                  //                              if($concept['slide'][$key]['Slide']['slide_type'] == 5){
+                                  //                                 $concept['slide'][$key]['Slide']['content'] =
+                                  //                                 $this->Question->findById($concept['slide'][$key]['Slide']['content']);
+                                  //                                 if(preg_match_all('/<img[^>]+>/i',$concept['slide'][$key]['Slide']['content']['Question']['question'], $result)){                  
+                                  //                                   $images[$img] = $result[0];                
+                                  //                                 $img++;
+                                  //                               }
+                                  //                               // $concept['slide'][$key]['Slide']['content']['Question']['question'] = htmlspecialchars($concept['slide'][$key]['Slide']['content']['Question']['question']);
+                                  //                               $concept['slide'][$key]['Slide']['content']['Question']['question'] = str_replace("'","&#39;",$exercise['slide'][$key]['Slide']['content']['Question']['question']);
+                                  //                               $concept['slide'][$key]['Slide']['content']['Question']['question'] = str_replace("-","&#45;",$exercise['slide'][$key]['Slide']['content']['Question']['question']);
+
+                                  //                              }
+                                  //                            }
+                                  //                      }
+                                  //                      // $concept['lesson'] = $this->Element->module($id, $type);
+                                  //                      // $concept['course'] = $this->Lesson->getcourse($concept['lesson']['id']);
+                                  //                      //        $modules = $this->CourseLessonMap->find('all', array('conditions' => array(
+                                  //                      //    'CourseLessonMap.course_id =' => $concept['course']['id'],
+                                  //                      //    'CourseLessonMap.deleted !=' => 1,
+                                  //                      //      )));
+                                  //                      $concept['attempts'] = count($attempts);                                      
+                                  //                                   // content 
+                                  //                 $lesson['element'][$ele] = $concept;
+                                  //                 $lesson['element'][$ele]['image']=$images;
+
+                                  //      $ele++;
+                                  //     }
+                                  //     // error_log("sddsds".print_r($lesson,true));
+                                  //     }
+                                      if($value['LessonElementMap']['element_type'] == 3){
+                                        $exe = $this->Exercise->findById($value['LessonElementMap']['element_id']);
+                                        if($exe['Exercise']['slides'] != ""){
+                                        // $lesson['element'][$ele] = $exe;
+                                          $id = $value['LessonElementMap']['element_id'];
+                                        // $exerciseattempt = $this->StudentExerciseAttempt->find("first",array('conditions' => array(
+                                        //   'StudentExerciseAttempt.element_id' => $value['LessonElementMap']['element_id'],
+                                        //   'StudentExerciseAttempt.student_id' => $user['Student']['id'],
+                                        //   'StudentExerciseAttempt.status' => 2,
+                                        //   'StudentExerciseAttempt.deleted' => 0)));                        
+                                        // if(!empty($exerciseattempt))
+                                        //   $lesson['element'][$ele]['attempt']  = $exerciseattempt['StudentExerciseAttempt']['status'];          
+                                        // else
+                                        //   $lesson['element'][$ele]['attempt']  = 0;          
+                                        // $lesson['element'][$ele]['element_type']  = 3;                                                    
+                                        /*content fetch*/
+                                         $attempts=$this->StudentExerciseAttempt->query("select * from student_exercise_attempt where 
+                                          element_id = $id and student_id = $studentid and deleted=0");
+                                               //                   $con  =array(
+                                               //  'LessonElementMap.element_id' =>$id,
+                                               // 'LessonElementMap.element_type' => 3
+                                               //     );
+                                        // $lessonmap = $this->LessonElementMap->find("all",array('conditions' => $con));
+                                        $img = 0;
+                                        if(count($attempts) == 0) 
+                                      {
+                                        $exercise = $this->Exercise->findById($id);
+                                        $elements= $this->LessonElementMap->query("select * from lesson_element_map where element_id = $id and element_type = 3;");
+                                         $slideids = explode(",",$exercise['Exercise']['slides']);
+                                         $exercise['slide'] = array();
+                                         $type = 3;
+                                        
+                                         foreach($slideids as $key => $slide)
+                                         {            
+                                            $exercise['slide'][$key] = $this->Slide->findById($slide);
+                                            if($exercise['slide'][$key]['Slide']['slide_type'] == 5) 
+                                            {
+                                              $exercise['slide'][$key]['Slide']['content'] =
+                                              $this->Question->findById($exercise['slide'][$key]['Slide']['content']);                
+                                              if(preg_match_all('/<img[^>]+>/i',$exercise['slide'][$key]['Slide']['content']['Question']['question'], $result)){                                    
+                                              $images[$img] = $result[0];                
+                                              $img++;
+                                            }
+                                            if(preg_match_all('/<img[^>]+>/i',$exercise['slide'][$key]['Slide']['content']['Question']['solution_text'], $result)){                                    
+                                              $images[$img] = $result[0];                
+                                              $img++;
+                                            }
+                            // $exercise['slide'][$key]['Slide']['content']['Question']['question'] = htmlspecialchars($exercise['slide'][$key]['Slide']['content']['Question']['question'],ENT_QUOTES);
+                                          $exercise['slide'][$key]['Slide']['content']['Question']['question'] = str_replace("'","&#39;",$exercise['slide'][$key]['Slide']['content']['Question']['question']);
+                                          $exercise['slide'][$key]['Slide']['content']['Question']['question'] = str_replace("-","&#45;",$exercise['slide'][$key]['Slide']['content']['Question']['question']);
+                                          $exercise['slide'][$key]['Slide']['content']['Question']['solution_text'] = str_replace("'","&#39;",$exercise['slide'][$key]['Slide']['content']['Question']['solution_text']);
+                                          $exercise['slide'][$key]['Slide']['content']['Question']['solution_text'] = str_replace("-","&#45;",$exercise['slide'][$key]['Slide']['content']['Question']['solution_text']);
+                                          }
+                                       }
+                                       
+                                        $exercise['status'] = 0;
+                                        $exercise['last_visited'] = 1;            
+                                     }
+                                       else if(count($attempts) == 1 && $attempts[0]['student_exercise_attempt']['status'] == 1 && 
+                                        $attempts[0]['student_exercise_attempt']['isMobileAttempt'] == 1) 
+                                     {
+                                        $exercise = $this->Exercise->findById($id);
+                                        $elements= $this->LessonElementMap->query("select * from lesson_element_map where element_id = $id and element_type = 3;");
+                                        $slideids = explode(",",$exercise['Exercise']['slides']);
+                                        
+                                        $exercise['slide'] = array();
+                                        $type = 3;
+                                        foreach($slideids as $key => $slide)
+                                       {
+                                         $result = array();
+                                          $exercise['slide'][$key] = $this->Slide->findById($slide);
+                                          if($exercise['slide'][$key]['Slide']['slide_type'] == 5) 
+                                         {
+                                            $exercise['slide'][$key]['Slide']['content'] =
+                                            $this->Question->findById($exercise['slide'][$key]['Slide']['content']);                
+                                          if(preg_match_all('/<img[^>]+>/i',$exercise['slide'][$key]['Slide']['content']['Question']['question'], $result)){                    
+                                            $images[$img] = $result[0];                
+                                            $img++;
+                                          }
+                                          if(preg_match_all('/<img[^>]+>/i',$exercise['slide'][$key]['Slide']['content']['Question']['solution_text'], $result)){                                    
+                                              $images[$img] = $result[0];                
+                                              $img++;
+                                            }
+                                          // $exercise['slide'][$key]['Slide']['content']['Question']['question'] = htmlspecialchars($exercise['slide'][$key]['Slide']['content']['Question']['question'],ENT_QUOTES);
+                                           $exercise['slide'][$key]['Slide']['content']['Question']['question'] = str_replace("'","&#39;",$exercise['slide'][$key]['Slide']['content']['Question']['question']);
+                                           $exercise['slide'][$key]['Slide']['content']['Question']['question'] = str_replace("-","&#45;",$exercise['slide'][$key]['Slide']['content']['Question']['question']);
+                                           $exercise['slide'][$key]['Slide']['content']['Question']['solution_text'] = str_replace("'","&#39;",$exercise['slide'][$key]['Slide']['content']['Question']['solution_text']);
+                                          $exercise['slide'][$key]['Slide']['content']['Question']['solution_text'] = str_replace("-","&#45;",$exercise['slide'][$key]['Slide']['content']['Question']['solution_text']);
+                                         }
+                                       }
+                                        $exercise['status'] = $attempts[0]['student_exercise_attempt']['status'];
+                                        $exercise['time'] = $attempts[0]['student_exercise_attempt']['duration'];
+                                        $exercise['isMobileAttempt'] = $attempts[0]['student_exercise_attempt']['isMobileAttempt'];
+                                        $exercise['answers'] = $attempts[0]['student_exercise_attempt']['answers']; 
+                                        $exercise['score'] = $attempts[0]['student_exercise_attempt']['score']; 
+                                        $exercise['last_visited'] = $attempts[0]['student_exercise_attempt']['last_visited']; 
+                                        $exercise['slide_modified'] = $attempts[0]['student_exercise_attempt']['slide_modified']; 
+                                      }
+                                      else if(count($attempts) == 1 && $attempts[0]['student_exercise_attempt']['status'] == 2 && $attempts[0]['student_exercise_attempt']['isMobileAttempt'] == 1) 
+                                     { 
+                                              $exercise = $this->Exercise->findById($id);
+                                              $exercise['score'] = $attempts[0]['student_exercise_attempt']['score'];
+                                              $exercise['isMobileAttempt'] = $attempts[0]['student_exercise_attempt']['isMobileAttempt'];
+                                              $exercise['status'] = $attempts[0]['student_exercise_attempt']['status'];
+                                              $exercise['time'] = $attempts[0]['student_exercise_attempt']['duration'];
+                                              $exercise['answers'] = $attempts[0]['student_exercise_attempt']['answers'];
+                                              $exercise['slide_modified'] = $attempts[0]['student_exercise_attempt']['slide_modified']; 
+                                                     $exercise['last_visited'] = $attempts[0]['student_exercise_attempt']['last_visited']; 
+                                              $answers=explode("##",$exercise['answers']);
+                                              $question_ids = explode("@",$exercise['answers']);
+                                              $questions = array();
+                                               for($j = 0; $j < count($question_ids) - 1; $j++) {
+                                               $questions[$j] = $question_ids[$j];
+                                              if($j != 0) {
+                                                 $question_ids[$j] = explode("##", $question_ids[$j]);
+                                                 $question_ids[$j] = isset($question_ids[$j][1]) == 1 ? $question_ids[$j][1] : 0;
+                                               }
+                                              $questions[$j] = $question_ids[$j];
+                                              }
+                                             $elements= $this->LessonElementMap->query("select * from lesson_element_map where element_id = $id and element_type = 3;");
+                                            $slideids = explode(",",$exercise['Exercise']['slides']);
+                                            $exercise['slide'] = array();
+                                            $type = 3;
+                                           foreach($slideids as $key => $slide)
+                                         {
+                                           $exercise['slide'][$key] = $this->Slide->findById($slide);
+                                          if($exercise['slide'][$key]['Slide']['slide_type'] == 5) 
+                                           {
+                                            $exercise['slide'][$key]['Slide']['content'] =
+                                            $this->Question->findById($exercise['slide'][$key]['Slide']['content']);                                
+                                            if(preg_match_all('/<img[^>]+>/i',$exercise['slide'][$key]['Slide']['content']['Question']['question'], $result)){                                    
+                                            $images[$img] = $result[0];                
+                                            $img++;
+                                          }         
+                                          if(preg_match_all('/<img[^>]+>/i',$exercise['slide'][$key]['Slide']['content']['Question']['solution_text'], $result)){                                    
+                                              $images[$img] = $result[0];                
+                                              $img++;
+                                            }       
+                                          // $exercise['slide'][$key]['Slide']['content']['Question']['question'] = htmlspecialchars($exercise['slide'][$key]['Slide']['content']['Question']['question'],ENT_QUOTES);
+                                            $exercise['slide'][$key]['Slide']['content']['Question']['question'] = str_replace("'","&#39;",$exercise['slide'][$key]['Slide']['content']['Question']['question']);
+                                            $exercise['slide'][$key]['Slide']['content']['Question']['question'] = str_replace("-","&#45;",$exercise['slide'][$key]['Slide']['content']['Question']['question']);
+                                            $exercise['slide'][$key]['Slide']['content']['Question']['solution_text'] = str_replace("'","&#39;",$exercise['slide'][$key]['Slide']['content']['Question']['solution_text']);
+                                          $exercise['slide'][$key]['Slide']['content']['Question']['solution_text'] = str_replace("-","&#45;",$exercise['slide'][$key]['Slide']['content']['Question']['solution_text']);
+                                          }
+                                        }
+                                    }
+                                    else if($attempts[0]['student_exercise_attempt']['isMobileAttempt'] == 0){
+                                      $isMobileAttempt = false;
+                                    }
+                                                           
+                                      $exercise['attempts'] = count($attempts);
+                                      $lesson['element'][$ele] = $exercise;
+                                      $lesson['element'][$ele]['image']=$images;
+                                                      /*content fetch*/
+                                                      $ele++;        
+                               }                                                  
+                      }                        
+                      }
+                       $puzzler['Ahapuzzler']['thisweek'][$i] = $lesson;                       
+                      $i++;
+                      }                      
+                      }}
+                  }
+                }                  
+               if($i == 0 && $isMobileAttempt){
+                  echo json_encode(array("status" => Configure::read('status.success'),
+                          "msg"=> Configure::read('msg.No_Puzzler'),"token" => $tokenexist['Agpuzzlertoken']['TOKEN']));    
+               }
+               else if($i > 0 && $isMobileAttempt) {
+              echo json_encode(array("status" => Configure::read('status.success'),"Puzzler" => $puzzler,
+                "msg"=> Configure::read('msg.Subscribed'),"token" => $tokenexist['Agpuzzlertoken']['TOKEN']));    
+            }
+             else{
+              echo json_encode(array("status" => Configure::read('status.success'),
+                "msg"=> Configure::read('msg.WebAttempt'),"token" => $tokenexist['Agpuzzlertoken']['TOKEN']));     
+             }
+            }
+            elseif($auth == Configure::read('msg.Subscription_Expired'))
+              echo json_encode(array("status" => Configure::read('status.success'),
+                "msg"=> Configure::read('msg.Subscription_Expired'),"token" => $tokenexist['Agpuzzlertoken']['TOKEN'])); 
+            elseif($auth == Configure::read('msg.Not_Subscribed'))
+              echo json_encode(array("status" => Configure::read('status.success'),
+               "msg"=> Configure::read('msg.Not_Subscribed'),"token" => $tokenexist['Agpuzzlertoken']['TOKEN'])); 
+        }
+        else{
+           echo json_encode(array("status" => Configure::read('status.error'),              
+              "msg" => Configure::read('msg.Invalid_Token'),"token" => $token)); 
+        }
+  }
+  else{
+           echo json_encode(array("status" => Configure::read('status.error'),              
+              "msg" => Configure::read('msg.No_Token_Received'))); 
+        }
+}
+
+public function submit_answer(){
+   $this->autoRender = false;    
+   if(isset($_POST['token']) && $_POST['token'] != ""){   
+    if((isset($_POST['element_id']) && $_POST['element_id'] != "") && 
+      (isset($_POST['score']) && $_POST['score'] != "") &&
+      (isset($_POST['answers']) && $_POST['answers'] != "") &&      
+        (isset($_POST['status']) && $_POST['status'] != ""))
+    {
+    $data = array();    
+    $token = urlencode($_POST['token']);        
+     $tokenexist = $this->Agpuzzlertoken->find("first",array('conditions'=>
+          array('Agpuzzlertoken.TOKEN' => $token)));
+        if(!empty($tokenexist)){
+          $user = $this->Student->findById($tokenexist['Agpuzzlertoken']['STUDENT_ID']);
+          $student_id = $user['Student']['id'];
+          $data['element_id'] = $_POST['element_id'];
+          $data['student_id'] = $student_id;
+          $data['score'] = $_POST['score'];          
+          $data['last_visited'] = 1;          
+          $data['isMobileAttempt'] = 1;          
+          $data['answers'] = $_POST['answers'];
+          $str = "select * from student_exercise_attempt where student_id=".$student_id." and deleted = 0 and element_id = ".$_POST['element_id'];
+           $attempts = $this->StudentExerciseAttempt->query($str) ;        
+    if(empty($attempts)) {
+      $data['attempt'] = 1;
+    }
+    else if($attempts[count($attempts) - 1]['student_exercise_attempt']['attempt'] == 1 && 
+      $attempts[count($attempts) - 1]['student_exercise_attempt']['status'] == 2 &&
+      $attempts[count($attempts) - 1]['student_exercise_attempt']['slide_modified'] == 0) {
+
+      $data['attempt'] = 2;
+    }
+    else {
+      $data['id'] = $attempts[count($attempts) - 1]['student_exercise_attempt']['id'];
+      $data['attempt'] = $attempts[count($attempts) - 1]['student_exercise_attempt']['attempt'];
+    }
+    
+      $data['status'] = $_POST['status'];    
+        $lesson_element = $this->LessonElementMap->find("first",array('conditions' => 
+                          array('LessonElementMap.element_id' => $_POST['element_id'],
+                            'LessonElementMap.element_type' => 3,
+                            'LessonElementMap.deleted' => 0)));                                           
+        $lessonvalid = $this->Lesson->find("first",array('conditions' => 
+                        array('Lesson.id' => $lesson_element['LessonElementMap']['lesson_id'],
+                               'Lesson.start_date <=' => date("Y-m-d", strtotime(date("Y-m-d")." +1 day")),
+                              'Lesson.end_date >='=> date("Y-m-d", strtotime(date("Y-m-d"))),   
+                        'Lesson.deleted' => 0)));       
+      if(!empty($lessonvalid)){
+    if($data['attempt'] != 2 || $attempts[count($attempts) - 1]['student_exercise_attempt']['slide_modified'] != 0){    
+      $data['answers'] = str_replace("|","!",$data['answers']);      
+      $this->StudentExerciseAttempt->save($data);                                            
+          }
+
+  if($data['status'] == 1) {
+         $this->StudentActivity->addOrUpdatemob($student_id,
+          $this->StudentActivity->ACTIVITY_TYPES['EXERCISE'], 
+        $data['element_id'],
+        $this->StudentActivity->ACTIVITY_STATUS['IN PROGRESS'],
+        "0"); 
+       } 
+      else {
+    $this->StudentActivity->addOrUpdatemob($student_id,
+          $this->StudentActivity->ACTIVITY_TYPES['EXERCISE'], 
+        $data['element_id'],
+        $this->StudentActivity->ACTIVITY_STATUS['FINISHED'],
+        "0"); 
+          }
+        }
+        else{
+          if(empty($attempts)){
+              $data['answers'] = str_replace("|","!",$data['answers']);      
+              $this->StudentExerciseAttempt->save($data);                                            
+          }
+          if($data['status'] == 1) {
+         $this->StudentActivity->addOrUpdatemob($student_id,
+          $this->StudentActivity->ACTIVITY_TYPES['EXERCISE'], 
+        $data['element_id'],
+        $this->StudentActivity->ACTIVITY_STATUS['IN PROGRESS'],
+        "0"); 
+       } 
+      else {
+    $this->StudentActivity->addOrUpdatemob($student_id,
+          $this->StudentActivity->ACTIVITY_TYPES['EXERCISE'], 
+        $data['element_id'],
+        $this->StudentActivity->ACTIVITY_STATUS['FINISHED'],
+        "0"); 
+          }
+        }
+        echo json_encode(array("status" => Configure::read('status.success'),              
+              "msg" => Configure::read('msg.Saved'),"token" => $token));        
+      }
+      else{
+           echo json_encode(array("status" => Configure::read('status.error'),              
+              "msg" => Configure::read('msg.Invalid_Token'),"token" => $token)); 
+        }     
+   }
+         else if(!isset($_POST['element_id']) || $_POST['element_id'] == "")
+                 echo json_encode(array("status" => Configure::read('status.error'),              
+                 "msg" => Configure::read('msg.ExerciseId_Missing'))); 
+        else if(!isset($_POST['status']) || $_POST['status'] == "")
+                 echo json_encode(array("status" => Configure::read('status.error'),              
+                 "msg" => Configure::read('msg.Status_Missing'))); 
+        else if(!isset($_POST['score']) || $_POST['score'] == "")
+           echo json_encode(array("status" => Configure::read('status.error'),              
+           "msg" => Configure::read('msg.Score_Missing')));          
+         else if(!isset($_POST['answers']) || $_POST['answers'] == "")
+           echo json_encode(array("status" => Configure::read('status.error'),              
+           "msg" => Configure::read('msg.Answer_Missing'))); 
+ }
+   else{
+           echo json_encode(array("status" => Configure::read('status.error'),              
+           "msg" => Configure::read('msg.No_Token_Received'))); 
+        }
+ }
+
+}

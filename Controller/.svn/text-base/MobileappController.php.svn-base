@@ -1,0 +1,79 @@
+<?php
+
+class MobileappController extends AppController {
+
+    public $name = "Mobileapp";
+    public $uses = array("Slide",'Question','MobileAppQuestion','MobileAppSlide');
+    
+    
+    public function admin_index(){
+		$this->layout = "ahaguru_mobile_math";
+	}          
+
+	public function adata_index(){
+       $slides = $this->MobileAppSlide->find("all",array('conditions'=>array('MobileAppSlide.deleted' => 0),'order'=>array('MobileAppSlide.day_order')));
+       foreach($slides as $key => $slide) {
+	       if($slide['MobileAppSlide']['type_id'] == 5) {
+		       $slides[$key]['MobileAppSlide']['content'] =
+        	 $this->MobileAppQuestion->findById($slide['MobileAppSlide']['content']);
+	       }
+	    }
+         $this->set("json", json_encode($slides));
+	}          
+
+	public function adata_add_slide() {
+	    $result;
+	    $data = $this->request->data;
+        $data['File']['content']['name'] = str_replace(' ', '_', $data['File']['content']['name']);
+  	    if($data['type_id'] == 1) {
+	       $result = $this->uploadFiles("mobileapp_content", $this->data['File']);
+	    }
+        if($data['type_id'] == 6 || $data['type_id'] == 7) {
+           $result = $this->uploadFiles("content", $this->data['File']);
+        }
+	    if($data['type_id'] == 5) {
+	        $this->MobileAppQuestion->save($data['question']);
+	        $data['content'] = $this->MobileAppQuestion->id;
+	    }
+        if(empty($result) || (!empty($result) && !array_key_exists("errors", $result)) || (!empty($result) 
+            && !array_key_exists("nofiles", $result))) {
+	        if(!empty($result) && !array_key_exists("nofiles", $result) && $data['slide_type'] != 5) {
+ 		        $data['content'] = $data['File']['content']['name'];
+	        }
+            $this->MobileAppSlide->save($data);
+        }
+ 	    $this->redirect("/admin/mobileapp");	     
+    }
+	public function adata_edit_slide() {
+	    $result;
+	    $data = $this->request->data;
+	    if($data['type_id'] == 1) {
+	        $result = $this->uploadFiles("mobileapp_content", $this->data['File']);
+       	}
+        if($data['type_id'] == 6 || $data['type_id'] == 7) {
+          $result = $this->uploadFiles("mobileapp_content", $this->data['File']);
+        }
+	    if($data['type_id'] == 5) {
+	          $this->MobileAppQuestion->id = $data['question_id'];
+	          $this->MobileAppQuestion->save($data['question']);
+	          $data['content'] = $this->MobileAppQuestion->id;
+	      }
+	      if(empty($result) || (!empty($result) && !array_key_exists("errors", $result)) || (!empty($result) 
+	              && !array_key_exists("nofiles", $result))) {
+	        if(!empty($result) && !array_key_exists("nofiles", $result) && $data['type_id'] != 5)
+         	    $data['content'] = $data['File']['content']['name'];
+	            $this->MobileAppSlide->id = $data['slide_id'];
+	            $this->MobileAppSlide->save($data);
+        }
+           $this->redirect("/admin/mobileapp");
+	
+    }
+
+    public function adata_remove_slide() {
+       	$data = $this->request->data;
+	   	$this->MobileAppSlide->id = $data['slideid'];
+	    $this->MobileAppSlide->save($data);
+	    $this->set("json", json_encode(array("message" => "success")));
+    }
+
+}

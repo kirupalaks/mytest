@@ -1,0 +1,56 @@
++------------+-----------+----------------+----------------------------------------------------+
+| student_id | course_id | challenge_type | comments                                           |
++------------+-----------+----------------+----------------------------------------------------+
+|         13 |         2 | NULL           | Added by Admin                                     |
+|         54 |         2 | NULL           | Added by Admin                                     |
+|         56 |         2 | NULL           | Added by Admin                                     |
+|         79 |         2 | NULL           | Added by Admin                                     |
+|         89 |         2 | NULL           | Added by Admin                                     |
+|        172 |         2 | NULL           | Added by Admin                                     |
+|          4 |         2 | NULL           | Added by Admin                                     |
+|        198 |         2 | NULL           | Added by Admin                                     |
+|        280 |         2 | NULL           | Added by Admin                                     |
+|        323 |         2 | PC1            | Added by Admin,Hindu Existing Student              |
+|        388 |         2 | NULL           | Added by couponcode 43391249E9                     |
+|         13 |         2 | NULL           | Added by couponcode C6B54DAF70                     |
+|        433 |         2 | PC1            | Added by Admin,Hindu Existing Student              |
+|        997 |         2 | NULL           | Added by Admin                                     |
+|       1542 |         2 | NULL           | Added by Admin                                     |
+|       1393 |         2 | PC1            | Added by Admin,Hindu Existing Student              |
+|       2163 |         2 | NULL           | Added by Admin                                     |
+|        564 |         2 | NULL           | Added by script                                    |
+|        590 |         2 | NULL           | Added by script                                    |
+|        880 |         2 | NULL           | Admin                                              |
+|        884 |         2 | NULL           | Admin                                              |
+|        972 |         2 | PC1            | Hindu Existing Student                             |
+|        983 |         2 | NULL           | Admin                                              |
+|        984 |         2 | PC1            | Hindu Existing Student                             |
+|        985 |         2 | NULL           | Admin                                              |
+|        986 |         2 | NULL           | Admin                                              |
+|       1006 |         2 | NULL           | Admin                                              |
+|       1007 |         2 | NULL           | Admin                                              |
+|       1019 |         2 | NULL           | Admin                                              |
+|       1040 |         2 | PC1            | Hindu Existing Student                             |
+|       1106 |         2 | NULL           | Admin                                              |
+|       1131 |         2 | NULL           | Admin                                              |
+|       1136 |         2 | PC1            | Hindu Existing Student                             |
+|       1142 |         2 | PC1            | Hindu Existing Student                             |
+|       1168 |         2 | PC1            | Hindu Existing Student                             |
+|       1179 |         2 | NULL           | Admin                                              |
+|       1192 |         2 | NULL           | Admin                                              |
+|       1206 |         2 | PC1            | Hindu Existing Student                             |
+|       1267 |         2 | PC1            | Hindu Existing Student                             |
+|       1324 |         2 | NULL           | Admin                                              |
+|       1326 |         2 | NULL           | Admin                                              |
+|       1354 |         2 | NULL           | Added by script                                    |
+|       1206 |         2 | NULL           | Added by script                                    |
+|       3294 |         2 | NULL           | online,Online_Payment                              |
+|       3619 |         2 | NULL           | Added by Admin                                     |
+|       2707 |         2 | PC1            | Added by Admin,hindu_direct,Hindu Existing Student |
+|       1402 |         2 | PC1            | hindu_direct,Hindu Existing Student Online_Payment |
+|       4455 |         2 | NULL           | Added by Admin                                     |
+|       4582 |         2 | NULL           | Added by Admin                                     |
+|       5898 |         2 | NULL           | Added by Admin                                     |
+|       5965 |         2 | NULL           | Added by admin                                     |
++------------+-----------+----------------+----------------------------------------------------+
+51 rows in set (0.03 sec)

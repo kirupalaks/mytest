@@ -1,0 +1,612 @@
+<?php
+
+class ClassroomController extends AppController {
+
+    public $name = "Classroom";
+
+    public $uses = array('ClassroomCourse','Batch','ClassroomBatch','Teacher','Subjects','Location','StudentBatchMap',
+      'Student','ClassroomStudent','Standard','ParentRelationship','TeacherBatchMap','StudentClassroomBatchMap','StudentCourseMap');
+
+    public function beforeFilter() {
+   	parent::beforeFilter();
+	$this->layout = "default";
+  $this->Auth->allow("verify_email");
+    }
+
+    public function admin_index() {
+	$this->layout = "ahaguru";
+    }
+
+      public function admin_courses() {
+  $this->layout = "ahaguru";
+    }
+
+     public function student_index(){  
+      $this->layout = "ahaguru";
+        $user = $this->Auth->user();
+            $this->set('user', $user);   
+  }
+        
+
+  public function adata_courses() {
+  $conditions = array(
+        "ClassroomCourse.deleted =" => 0,
+        //"ClassroomCourse.types =" => 2
+        );
+      $this->set("json",json_encode($this->ClassroomCourse->find("all", array('conditions' => $conditions))));
+  }
+
+public function verify_email() {
+    if($this->request->is("post")){
+      $email = $this->request->data['email'];
+      $student = $this->ClassroomStudent->findByEmail($email);
+      if($student == null) {
+        $this->set("json", json_encode(array("isvalid"=>"yes")));
+      }
+      else {
+        $this->set("json", json_encode(array("isvalid"=>"no")));
+      }
+    }
+  }
+
+public function subjects() {
+  
+      $this->set("json",json_encode($this->Subjects->find("all")));
+  }
+
+  public function location() {
+  
+      $this->set("json",json_encode($this->Location->find("all")));
+  }
+
+   public function schedule($id){
+    $subjects = $this->Subjects->find("all");
+    $teachers = $this->Teacher->find("all");
+    $i=0;$j=0;
+    $teacher = array();    
+    $location = array();
+    foreach ($subjects as $key =>$sub) {
+      $batche = array();
+    $teacer = array();       
+    $teachers_id=array();
+         $conditions = array(
+        "ClassroomCourse.deleted =" => 0,
+       // "ClassroomCourse.types =" => 2,
+        "ClassroomCourse.subject =" => $sub['Subjects']['id']
+        );
+      $course = $this->ClassroomCourse->find("all", array('conditions' => $conditions));
+     foreach ($course as $crs) {
+    
+    $conditio = array(
+        "Batch.deleted =" => 0,
+        "Batch.class =" => $id,
+        "Batch.course_id =" => $crs['ClassroomCourse']['id']
+        );
+    
+      $batc=$this->Batch->find("all", array('conditions' => $conditio));
+      $batche = array_merge($batche,$batc);
+     }
+     foreach ($batche as $key => $value) {  
+        $teachers_id = explode(",", $value['Batch']['teachers_id']);
+       $teacher = array_merge($teacher,$teachers_id);  
+       $location[$j] = $value['Batch']['location'];
+       $j++;
+     }
+      
+            $teacer =array_merge($teacer,$teacher);
+            $batch[$i]['batches'] = $batche;       
+        $batch[$i]['subject'] = $sub['Subjects']['name'];
+       $i++;
+    }
+    
+   $batch[$i]['teachers']=array_unique($teacer);
+   $i++;
+   $batch[$i]['location']=array_unique($location);
+   $this->set("json",json_encode($batch));
+
+   }
+
+   public function batches(){
+    $subjects = $this->Subjects->find("all");
+    $teachers = $this->Teacher->find("all");
+    $i=0;$j=0;
+    $teacher = array();    
+    $location = array();
+    foreach ($subjects as $key =>$sub) {
+      $batche = array();
+    $teacer = array();       
+    $teachers_id=array();
+         $conditions = array(
+        "ClassroomCourse.deleted =" => 0,
+      //  "ClassroomCourse.types =" => 2,
+        "ClassroomCourse.subject =" => $sub['Subjects']['id']
+        );
+      $course = $this->ClassroomCourse->find("all", array('conditions' => $conditions));
+     foreach ($course as $crs) {
+    
+    $conditio = array(
+        "Batch.deleted =" => 0,
+        "Batch.course_id =" => $crs['ClassroomCourse']['id']
+        );
+    
+      $batc=$this->Batch->find("all", array('conditions' => $conditio));
+      $batche = array_merge($batche,$batc);
+     }
+     foreach ($batche as $key => $value) {  
+        $teachers_id = explode(",", $value['Batch']['teachers_id']);
+       $teacher = array_merge($teacher,$teachers_id);  
+       $location[$j] = $value['Batch']['location'];
+       $j++;
+     }
+      
+            $teacer =array_merge($teacer,$teacher);
+            $batch[$i]['batches'] = $batche;       
+        $batch[$i]['subject'] = $sub['Subjects']['name'];
+       $i++;
+    }
+    
+   $batch[$i]['teachers']=array_unique($teacer);
+   $i++;
+   $batch[$i]['location']=array_unique($location);
+   $this->set("json",json_encode($batch));
+
+   }
+
+ public function courses() {
+  $conditions = array(
+        "ClassroomCourse.deleted =" => 0,
+        //"ClassroomCourse.types =" => 2
+        );
+      $this->set("json",json_encode($this->ClassroomCourse->find("all", array('conditions' => $conditions))));
+  }
+
+
+    public function adata_add() {
+  if($this->request->is("post")) {
+      $data = $this->request->data;
+      $data['types'] = 2;
+         $add = $this->ClassroomCourse->save($data);    
+        
+      $this->redirect("/admin/classroom");
+  }
+    }
+
+
+       /* Edit Course */
+    public function adata_edit($id) {
+  if($this->request->is("POST")) {
+      $data = $this->request->data;
+          $this->ClassroomCourse->id = $id;
+      $add = $this->ClassroomCourse->save($data);
+    
+      $this->redirect("/admin/classroom");
+  }
+    }
+
+   /* Delete course */
+    public function adata_delete($courseid) {
+      /*if($this->Course->isSubscribed($courseid)) {
+        $this->set("json", json_encode(array( "message" => "Course is under active subscription, Please delete all 
+                          student subscription and try deleting again."))); 
+      } else {
+        if($this->Course->setDelete($courseid)){
+          $this->StdCourseMap->setUpdate($courseid);
+          $this->set("json", json_encode( array( "message" => "deleted") ));}
+        else 
+          $this->set("json", json_encode( array("message" => "error") ));
+      }*/
+      $this->set("json", json_encode( array( "message" => "deleted") ));
+    }
+
+    public function admin_batches() {
+  $this->layout = "ahaguru";
+    }
+  
+   public function teachers(){
+   
+   $this->set("json",json_encode($this->Teacher->find("all")));
+   }
+
+  public function adata_batches() {
+  $conditions = array(
+        "Batch.deleted =" => 0,
+          );
+      $this->set("json",json_encode($this->Batch->find("all", array('conditions' => $conditions))));
+  }
+
+    public function adata_add_batches() {
+  if($this->request->is("post")) {
+      $data = $this->request->data;
+      $teachers_id = $data['teachers_id'];
+       $data['teachers_id']= implode(',', $data['teachers_id']);
+        $this->Batch->save($data);
+        $batchid = $this->Batch->id;
+        foreach ($teachers_id as $id) {
+         $mapped = array (
+          'teachers_id' => $id,
+          'batch_id' => $batchid
+          );
+         $this->TeacherBatchMap->saveAll($mapped);
+         }
+        $this->redirect("/admin/classroom/batches");
+  }
+    }
+
+    /* Edit Course */
+    public function adata_edit_batches($id) {
+  if($this->request->is("POST")) {
+      $data = $this->request->data;
+      $teachers_id = $data['teachers_id'];
+
+      $data['teachers_id']= implode(',', $data['teachers_id']);
+          $this->Batch->id = $id;
+     $add = $this->Batch->save($data);
+       $batchid = $this->Batch->id;
+     $this->TeacherBatchMap->setDelete($batchid);
+     foreach ($teachers_id as $id) {
+      $conditions = array(
+        'batch_id' => $batchid,
+        'teachers_id '=> $id
+        );
+       $batchmap = $this->TeacherBatchMap->find("first",array('conditions' => $conditions));
+       
+       if(empty($batchmap))
+      {
+          $mapped = array (
+          'teachers_id' => $id,
+          'batch_id' => $batchid
+          );
+          
+         $this->TeacherBatchMap->saveAll($mapped);
+       }
+       else{
+        $datamapped = array (
+          'id' => $batchmap['TeacherBatchMap']['id'],
+          'teachers_id' => $id,
+          'batch_id' => $batchid,
+          'deleted' => 0
+          );
+        
+         $this->TeacherBatchMap->save($datamapped);
+       }
+     }
+      $this->redirect("/admin/classroom/batches");
+  }
+    }
+
+    public function sdata_selected_batches(){
+      $data = $this->request->data;
+      $subjects = $this->Subjects->find("all");
+    $teachers = $this->Teacher->find("all");
+    $i=0;$j=0;
+    $teacher = array();    
+    $location = array();
+    foreach ($subjects as $key =>$sub) {
+      $batche = array();
+    $teacer = array();       
+    $teachers_id=array();
+         $conditions = array(
+        "ClassroomCourse.deleted =" => 0,
+        //"ClassroomCourse.types =" => 2,
+        "ClassroomCourse.subject =" => $sub['Subjects']['id']
+        );
+      $course = $this->ClassroomCourse->find("all", array('conditions' => $conditions));
+     foreach ($course as $crs) {
+    foreach ($data['batche'] as $schedule) {
+    $conditio = array(
+        "Batch.deleted =" => 0,
+         "Batch.id =" => $schedule,
+        "Batch.course_id =" => $crs['ClassroomCourse']['id']
+        );
+       
+      $batc=$this->Batch->find("all", array('conditions' => $conditio));
+      $batche = array_merge($batche,$batc);
+     }}
+     foreach ($batche as $key => $value) {  
+        $teachers_id = explode(",", $value['Batch']['teachers_id']);
+       $teacher = array_merge($teacher,$teachers_id);  
+       $location[$j] = $value['Batch']['location'];
+       $j++;
+     }
+      
+            $teacer =array_merge($teacer,$teacher);
+            $batch[$i]['batches'] = $batche;       
+        $batch[$i]['subject'] = $sub['Subjects']['name'];
+       $i++;
+    }
+    
+   $batch[$i]['teachers']=array_unique($teacer);
+   $i++;
+   $batch[$i]['location']=array_unique($location);
+   $this->set("json",json_encode($batch));
+
+   }
+
+  public function logout() {
+    $user = $this->Auth->user();
+    if(isset($user['Student'])){
+      unset($_SESSION['classroomstudent']);      
+     $this->redirect("/student/classroom");
+    }
+      else{
+   $this->Auth->logout();
+  $this->redirect("/classroom");}
+    }
+
+  public function online_logout() {
+   $this->Auth->logout();
+   $this->redirect("/online");
+    }
+
+  public function sdata_confirm_batches(){
+      $data = $this->request->data;
+      $user = $this->Auth->user();
+      $teachers = $this->Teacher->find("all");
+      $standards = $this->Standard->find("all");
+      $locations = $this->Location->find("all");
+      $Parent_relationship = $this->ParentRelationship->find("all");
+      $courses = $this->ClassroomCourse->find("all",array('conditions' => 
+        array(//'ClassroomCourse.types' => 2,
+          'ClassroomCourse.deleted' => 0)));
+      if(isset($user['Student'])){
+      $student_id = $this->Session->read('classroomstudent');
+      $user = $this->ClassroomStudent->find("first",array('conditions'=>
+        array('ClassroomStudent.id' => $student_id)));
+      $email = $user['ClassroomStudent']['email']; 
+      $parent_email = $user['ClassroomStudent']['parent_email'];
+      /*$name = $direct_student['ClassroomStudent']['name'];
+      $school = $direct_student['ClassroomStudent']['school_name'];
+      $parent = $direct_student['ClassroomStudent']['parent_name'];
+      $parent_email = $direct_student['ClassroomStudent']['parent_email'];
+      $parent_mobile = $direct_student['ClassroomStudent']['parent_mobile'];
+      $addr = $direct_student['ClassroomStudent']['address'];
+      $city = $direct_student['ClassroomStudent']['place'];
+      $country = $direct_student['ClassroomStudent']['country'];
+      $state = $direct_student['ClassroomStudent']['state'];*/
+        foreach ($Parent_relationship as $rel) {
+        if($rel['ParentRelationship']['id'] == $user['ClassroomStudent']['parent_relationship'])
+          $parent_relationship = $rel['ParentRelationship']['name'] ;
+      }
+      foreach ($standards as $std) {
+        if($std['Standard']['id'] == $user['ClassroomStudent']['standard'])
+          $stand = $std['Standard']['name'] ;
+      }
+      foreach ($data['batche'] as $sch) {    
+      $data['student_id'] = $student_id;
+      $data['batch_id'] = $sch;
+      $this->StudentBatchMap->saveAll($data);
+      $str = 'update classroom_students set enrolled = 1 where id = '.$student_id;
+      $this->ClassroomStudent->query($str);
+     }
+    } 
+    else{
+      //$name = $user['ClassroomStudent']['name'];
+      $email = $user['ClassroomStudent']['email']; 
+      $parent_email = $user['ClassroomStudent']['parent_email'];
+      //$school = $user['ClassroomStudent']['school_name'];
+      foreach ($Parent_relationship as $rel) {
+        if($rel['ParentRelationship']['id'] == $user['ClassroomStudent']['parent_relationship'])
+          $parent_relationship = $rel['ParentRelationship']['name'] ;
+      }
+      foreach ($standards as $std) {
+      if($std['Standard']['id'] == $user['ClassroomStudent']['standard'])
+          $stand = $std['Standard']['name'] ;
+      }
+        foreach ($data['batche'] as $sch) {
+          $data['student_id'] = $user['ClassroomStudent']['id'];
+      $data['batch_id'] = $sch;
+      $this->StudentBatchMap->saveAll($data);
+      $str = 'update classroom_students set enrolled = 1 where id = '.$user['ClassroomStudent']['id'];
+      $this->ClassroomStudent->query($str);
+     }
+    }
+    $rawstring = "<p>Welcome names,</p><br/>
+                  <p>Thank you for Registering with Direct Classroom Program.</p><br/>
+                  <p>Please Confirm your profile and selection details.</p>
+                  <p><b>Name </b>: names</p>
+                  <p><b>Email </b>: emails</p>
+                  <p><b>Class in School </b>: std</p>
+                  <p><b>School Name </b>: school</p>
+                  <p><b>Address </b>: addr</p>
+                  <p><b>City </b>: city</p>
+                  <p><b>State </b>: state</p>
+                  <p><b>Country </b>: country</p>
+                  <p><b>Mobile </b>: mobiles</p>
+                  <p><b>Parent Name </b>: parentname</p>
+                  <p><b>Parent Email </b>: parentemail</p>
+                  <p><b>Parent_relationship </b>: parentrel</p>
+                  <p><b>Parent Mobile </b>: parent_mobile</p>
+                  <br><br>
+                  <p><b>Batch detail</b></p>
+                  <table class='table table-bordered' style='border:1px solid #000000'>
+                  <tr style='background-color:#c00000;'>
+         <th style='text-align:center; color:#FFFFFF;padding:10px;border-right:1px solid #000000'>Batch</th>
+        <th style='text-align:center; color:#FFFFFF;padding:10px;border-right:1px solid #000000'>Class</th>
+        <th style='text-align:center; color:#FFFFFF;padding:10px;border-right:1px solid #000000'>Location</th>
+        <th style='text-align:center; color:#FFFFFF;padding:10px;border-right:1px solid #000000'>Course Name</th>
+        <th colspan='2' style='text-align:center; color:#FFFFFF;padding:10px;border-right:1px solid #000000'>Weekly Schedule</th>
+        <th style='text-align:center; color:#FFFFFF;padding:10px;'>Teachers</th>
+        </tr>tablecontent</table><br/>
+        <!--<p>Program fees can be paid anytime by the end of January. Your respective course teachers will contact you shortly regarding <br/>
+         the Parent-Teachers meeting.</p>-->
+         <p>Respective teachers will directly contact you to meet them and you can pay the fees at that time directly. </p>
+         <p>If Any corrections need to be done to the above details , Please email to <a href='learn@ahaguru.com'>learn@ahaguru.com</a>
+         <p>Thank you and Have a Good day !!!.</p>";
+         $tablecontent="";
+        foreach($data['batche'] as $key => $sch) {
+        if(($key+1)%2 ==0){
+            $color="#c9dba9";
+            }else{
+              $color="#acc87a";
+              }
+        $batch = $this->Batch->findById($sch);
+        $tablecontent .= "<tr style='background-color:$color;'><td style='text-align:center;border-right:1px solid #000000;padding:10px;'> ".$batch['Batch']['name']."</td>
+        <td style='text-align:center;background-color:$color;border-right:1px solid #000000;padding:10px'> Std ";
+        foreach($standards as $Standard){
+          if($Standard['Standard']['id'] == $batch['Batch']['class']){
+            $tablecontent .= $Standard['Standard']['name'];
+          }}
+          $tablecontent .="</td> <td style='text-align:center;border-right:1px solid #000000;padding:10px'>";
+        foreach($locations as $loc){
+          if($batch['Batch']['location'] == $loc['Location']['id']){
+         $tablecontent .=$loc['Location']['name'] ;
+         }}
+         $tablecontent .="</td>
+        <td style='text-align:center;border-right:1px solid #000000;padding:10px'>";
+          foreach($courses as $course){
+          if($batch['Batch']['course_id'] == $course['ClassroomCourse']['id']){
+        $tablecontent .=$course['ClassroomCourse']['name'];
+      }}
+     $tablecontent .="</td>
+       <td style='text-align:center;border-right:1px solid #000000;padding:10px'>".$batch['Batch']['schedule_day']."</td>
+        <td style='text-align:center;border-right:1px solid #000000;padding:10px'>".$batch['Batch']['schedule_time']."</td>
+        <td style='text-align:center;padding:10px'>";
+         $teach = explode(',',$batch['Batch']['teachers_id']);
+                foreach($teach as $tea){
+                foreach($teachers as $teacher) { 
+                if($teacher['Teacher']['id'] == $tea){
+         $tablecontent .= $teacher['Teacher']['name'];
+         if(sizeof($teach) > 1){
+                      $tablecontent .= " , ";
+                    }
+                      
+                     }}}
+                     $tablecontent .= "</tr>";
+         }
+
+$placeholders=array('names','emails','std','school','addr','city','state','country','mobiles','parentname',
+  'parentemail','parentrel','parent_mobile','tablecontent');
+
+$string=array($user['ClassroomStudent']['name'],$user['ClassroomStudent']['email'],$stand,$user['ClassroomStudent']['school_name'],$user['ClassroomStudent']['address'],$user['ClassroomStudent']['place'],
+  $user['ClassroomStudent']['state'],$user['ClassroomStudent']['country'],$user['ClassroomStudent']['mobile_number'],$user['ClassroomStudent']['parent_name'],
+  $user['ClassroomStudent']['parent_email'],$parent_relationship,$user['ClassroomStudent']['parent_mobile'],$tablecontent);
+$rawstr = str_replace($placeholders, $string, $rawstring);
+ $this->sendEmail($email,$parent_email, "Classroom: Registration",$rawstr,null);
+$emailstring = "<p>Dear Admin,</p>
+                <p>names has registered with direct classroom program,</p>
+                 <p><b>Student detail </b></p>
+                 <p><b>Name </b>: names</p>
+                  <p><b>Email </b>: emails</p>
+                  <p><b>Class in School </b>: std</p>
+                  <p><b>School Name </b>: school</p>
+                  <p><b>Address </b>: addr</p>
+                  <p><b>City </b>: city</p>
+                  <p><b>State </b>: state</p>
+                  <p><b>Country </b>: country</p>
+                  <p><b>Mobile </b>: mobiles</p>
+                  <p><b>Parent Name </b> : parentname</p>
+                  <p><b>Parent Email </b> : parentemail</p>
+                  <p><b>Parent_relationship </b>: parentrel</p>
+                  <p><b>Parent Mobile </b> : parentmobile</p>
+                  <br><br>
+                  <p><b>Batch detail</b></p>
+                  <table class='table table-bordered' style='border:1px solid #000000'>
+                  <tr style='background-color:#c00000;'>
+         <th style='text-align:center; color:#FFFFFF;padding:10px;border-right:1px solid #000000'>Batch</th>
+        <th style='text-align:center; color:#FFFFFF;padding:10px;border-right:1px solid #000000'>Class</th>
+        <th style='text-align:center; color:#FFFFFF;padding:10px;border-right:1px solid #000000'>Location</th>
+        <th style='text-align:center; color:#FFFFFF;padding:10px;border-right:1px solid #000000'>Course Name</th>
+        <th colspan='2' style='text-align:center; color:#FFFFFF;padding:10px;border-right:1px solid #000000'>Weekly Schedule</th>
+        <th style='text-align:center; color:#FFFFFF;padding:10px;'>Teachers</th>
+        </tr>tablecontent</table>";
+        $tablecontent="";
+        foreach($data['batche'] as $key => $sch) {
+        if(($key+1)%2 ==0){
+            $color="#c9dba9";
+            }else{
+              $color="#acc87a";
+              }
+        $batch = $this->Batch->findById($sch);
+        $tablecontent .= "<tr style='background-color:$color;'><td style='padding:10px;text-align:center;border-right:1px solid #000000'> ".$batch['Batch']['name']."</td>
+        <td style='text-align:center;background-color:$color;padding:10px;border-right:1px solid #000000'> Std ";
+        foreach($standards as $Standard){
+          if($Standard['Standard']['id'] == $batch['Batch']['class']){
+            $tablecontent .= $Standard['Standard']['name'];
+          }}
+          $tablecontent .="</td> <td style='text-align:center;padding:10px;border-right:1px solid #000000'>";
+        foreach($locations as $loc){
+          if($batch['Batch']['location'] == $loc['Location']['id']){
+         $tablecontent .=$loc['Location']['name'] ;
+         }}
+         $tablecontent .="</td>
+        <td style='text-align:center;border-right:1px solid #000000;padding:10px'>";
+          foreach($courses as $course){
+          if($batch['Batch']['course_id'] == $course['ClassroomCourse']['id']){
+        $tablecontent .=$course['ClassroomCourse']['name'];
+      }}
+     $tablecontent .="</td>
+       <td style='text-align:center;border-right:1px solid #000000;padding:10px'>".$batch['Batch']['schedule_day']."</td>
+        <td style='text-align:center;border-right:1px solid #000000;padding:10px'>".$batch['Batch']['schedule_time']."</td>
+        <td style='text-align:center;'>";
+         $teach = explode(',',$batch['Batch']['teachers_id']);
+                foreach($teach as $tea){
+                foreach($teachers as $teacher) { 
+                if($teacher['Teacher']['id'] == $tea){
+         $tablecontent .= $teacher['Teacher']['name'];
+         if(sizeof($teach) > 1){
+                      $tablecontent .= " , ";
+                    }
+                      
+                     }}}
+                     $tablecontent .= "</tr>";
+         }
+                            
+   $placeholders=array('names','emails','std','school','addr','city','state','country','mobiles','parentname',
+  'parentemail','parentrel','parentmobile','tablecontent');
+
+$string=array($user['ClassroomStudent']['name'],$user['ClassroomStudent']['email'],$stand,$user['ClassroomStudent']['school_name'],$user['ClassroomStudent']['address'],$user['ClassroomStudent']['place'],
+  $user['ClassroomStudent']['state'],$user['ClassroomStudent']['country'],$user['ClassroomStudent']['mobile_number'],$user['ClassroomStudent']['parent_name'],
+  $user['ClassroomStudent']['parent_email'],$parent_relationship,$user['ClassroomStudent']['parent_mobile'],$tablecontent);
+$emailstring = str_replace($placeholders, $string, $emailstring);
+ $this->sendEmail("kiruthiga.sekar10@gmail.com",null, "Classroom: Registration",$emailstring,null);
+   $this->set("json",json_encode(array("result" => "mapped")));
+
+   }
+
+public function adata_delete_batches($batchid) {
+         if($this->Batch->isSubscribed($batchid)) {
+        $this->set("json", json_encode(array( "message" => "Batch is under active subscription, Please delete all 
+                          student subscription and try deleting again."))); 
+      } else {
+        if($this->Batch->setDelete($batchid)){
+          $this->TeacherBatchMap->setDelete($batchid);
+               $this->set("json", json_encode( array( "message" => "deleted") ));
+             }
+        else {
+            $this->set("json", json_encode( array("message" => "error") ));
+        }
+      }
+      
+    }
+
+ public function admin_assign_course() {
+  $this->layout = "ahaguru";        
+      if($this->request->is("post")){
+          $data = $this->request->data;
+        $studentsid = $this->StudentClassroomBatchMap->findAllByBatchId($data['batch_id']);
+        foreach ($studentsid as $student) {          
+            $mapdata = array();          
+            $con = array(
+            'StudentCourseMap.student_id' => $student['StudentClassroomBatchMap']['student_id'],
+            'StudentCourseMap.course_id' => $data['course_id'],
+            // 'StudentCourseMap.deleted' => 0
+            );
+          $crsmap = $this->StudentCourseMap->find("first",array('conditions' => $con));          
+          if(!empty($crsmap))
+           $mapdata['id'] = $crsmap['StudentCourseMap']['id'];          
+            $mapdata['student_id'] = $student['StudentClassroomBatchMap']['student_id'];
+            $mapdata['course_id'] = $data['course_id'];            
+            $mapdata['status'] = 1;
+            $mapdata['comments'] = "Bulk Assigned";            
+            $mapdata['payment'] = 2;            
+            $mapdata['deleted'] = 0;
+            $this->StudentCourseMap->saveAll($mapdata);
+        }
+        $this->redirect("/admin/classroom");
+    }
+  }
+
+     public function classroombatches() {    
+      $this->set("json",json_encode($this->ClassroomBatch->find("all")));
+  }
+  }

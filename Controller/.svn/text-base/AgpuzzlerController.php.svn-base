@@ -1,0 +1,303 @@
+<?php
+
+class AgpuzzlerController extends AppController {
+
+    public $name = "Agpuzzler";
+
+    public $uses = array('Course','AgPuzzlerSubscription','StudentCourseMap','CourseLessonMap','Lesson','StudentExerciseAttempt','LessonElementMap',
+      'Test','Concept','Exercise','StudentConceptAttempt','StudentExerciseAttempt','StudentTestAttempt','StdCourseMap','School','Standard','Student');
+
+   public function beforeFilter() {
+	parent::beforeFilter();    
+	$this->layout = "default";
+    }
+
+   public function student_index(){
+       $this->layout="ahaguru";
+
+    }
+
+   public function sdata_index(){
+       $this->layout="default";
+       $user = $this->Auth->user();
+       $subscription = $this->AgPuzzlerSubscription->find("first",array(
+        'conditions' => array('AgPuzzlerSubscription.student_id' => $user['Student']['id'])));        
+       if(!empty($subscription))
+       {
+        $substartdate = date($subscription['AgPuzzlerSubscription']['SUBSCRIPTION_DATE']);
+         $subperiod = $subscription['AgPuzzlerSubscription']['SUBSCRIPTION_PERIOD']-1;
+        $subenddate = date("Y-m-d",strtotime('+'.$subperiod.' weeks', strtotime($substartdate)));
+        $weekStartDate = date('Y-m-d',strtotime("last Monday", strtotime($substartdate)));        
+        $weekEndDate = date('Y-m-d',strtotime("next Sunday", strtotime($subenddate)));        
+        $cours = $this->Course->findById($subscription['AgPuzzlerSubscription']['COURSE_ID']);
+        $subscription['AgPuzzlerSubscription']['end_date'] = $weekEndDate;        
+        $cours = $this->Course->findById($subscription['AgPuzzlerSubscription']['COURSE_ID']);
+        $coursestd = $this->StdCourseMap->findByCourseId($cours['Course']['id']);        
+      // $coures['AhaforWeek'] = $cours;                  
+      $con = array(
+       'CourseLessonMap.course_id' => $cours['Course']['id'],
+       'CourseLessonMap.deleted' => 0
+      );
+      $course_id = $cours['Course']['id'];            
+     //    $course_lesson = $this->CourseLessonMap->query("select * from course_lesson_map where course_id=$course_id and published = 1 and deleted = 0 and srno!=0 order by srno limit ".$subscription['AgPuzzlerSubscription']['SUBSCRIPTION_PERIOD'].";");
+     // if(empty($course_lesson)){
+     //    $course_lesson = $this->CourseLessonMap->query("select * from course_lesson_map where course_id=$course_id and published = 1 and deleted = 0 order by published_date limit ".$subscription['AgPuzzlerSubscription']['SUBSCRIPTION_PERIOD'].";");}      
+        $course_lesson = $this->CourseLessonMap->query("select * from course_lesson_map where course_id=$course_id and published = 1 and deleted = 0 and srno!=0 order by srno;");
+     if(empty($course_lesson)){
+        $course_lesson = $this->CourseLessonMap->query("select * from course_lesson_map where course_id=$course_id and published = 1 and deleted = 0 order by published_date;");}                    
+         if(!empty($course_lesson))
+         {
+            $j=0;$i=0;
+            foreach($course_lesson as $lessons)
+             {              
+
+                $lesson = $this->Lesson->find("first",array('conditions' => 
+                array('Lesson.id' => $lessons['course_lesson_map']['lesson_id'],
+                       'Lesson.start_date <=' => date("Y-m-d", strtotime(date("Y-m-d")." +1 day")),
+                      'Lesson.end_date >='=> date("Y-m-d", strtotime(date("Y-m-d"))),
+                      'Lesson.start_date >=' => $weekStartDate,
+                      // 'Lesson.end_date <='=> $weekEndDate,
+                      'Lesson.deleted' => 0))); 
+                        $lesson_element = $this->LessonElementMap->find("all",array('conditions' => 
+                  array('LessonElementMap.lesson_id' =>$lesson['Lesson']['id'],
+                    'LessonElementMap.deleted' => 0)));                                     
+           if(!empty($lesson) && !empty($lesson_element)){            
+            $lesson['class'] = $coursestd['StdCourseMap']['standard_id'];
+              $now = new DateTime();
+              $now->format('Y-m-d H:i:s');              
+              $start_date  =date_create(date("Y-m-d H:i:s"));                            
+              $end_date = date_create($lesson['Lesson']['end_date']);              
+              $diff= date_diff($end_date, $start_date);
+
+              //accesing days
+              $days = $diff->d;
+              // //accesing months
+              // $months = $diff34->m;
+              // //accesing years
+              // $years = $diff34->y;
+              // //accesing hours
+              // $hours=$diff34->h;
+              // //accesing minutes
+              // $minutes=$diff34->i;
+              // //accesing seconds
+              // $seconds=$diff34->s;
+              $lesson['Lesson']['day_count'] = $days + 1;
+
+              $subscription['Ahapuzzler']['thisweek'][$i] = $lesson;
+              $i++;
+              }
+              else if(empty($lesson)){
+                $lesson = $this->Lesson->find("first",array('conditions' => 
+                array('Lesson.id' => $lessons['course_lesson_map']['lesson_id'],
+                'Lesson.deleted' => 0))); 
+                $lesson_element = $this->LessonElementMap->find("all",array('conditions' => 
+                  array('LessonElementMap.lesson_id' =>$lesson['Lesson']['id'],
+                    'LessonElementMap.deleted' => 0)));                    
+                if(!empty($lesson_element)){                            
+                $previouslesson = $this->Lesson->find("first",array('conditions' => 
+                array('Lesson.id' => $lessons['course_lesson_map']['lesson_id'],
+                       'Lesson.start_date <=' => date("Y-m-d", strtotime(date("Y-m-d")." +1 day")),                      
+                'Lesson.deleted' => 0)));                                           
+                if(!empty($previouslesson)){
+                  $previouslesson['class'] = $coursestd['StdCourseMap']['standard_id'];   
+                 $subscription['Ahapuzzler']['pastweek'][$j] = $previouslesson;
+                 $exe = $this->LessonElementMap->find("all",array('conditions' =>
+                 array('LessonElementMap.lesson_id' => $previouslesson['Lesson']['id'],
+                  'LessonElementMap.element_type' => 3,
+                  'LessonElementMap.deleted' => 0 )));
+                  if(!empty($exe)){                 
+                 foreach ($exe as $exes) {
+                   $stuattmt =  $this->StudentExerciseAttempt->find("first",array('conditions' =>
+                    array('StudentExerciseAttempt.student_id' => $user['Student']['id'],
+                      'StudentExerciseAttempt.element_id' => $exes['LessonElementMap']['element_id'],                      
+                      'StudentExerciseAttempt.deleted' => 0,)));
+                   if(!empty($stuattmt))
+                    $subscription['Ahapuzzler']['pastweek'][$j]['Lesson']['attempt'] = $stuattmt['StudentExerciseAttempt']['status'];
+                  else
+                    $subscription['Ahapuzzler']['pastweek'][$j]['Lesson']['attempt'] = 0;
+                 }}
+                 else{
+                    $test = $this->LessonElementMap->find("all",array('conditions' =>
+                 array('LessonElementMap.lesson_id' => $previouslesson['Lesson']['id'],
+                  'LessonElementMap.element_type' => 1,
+                  'LessonElementMap.deleted' => 0 )));                  
+                 foreach ($test as $tests) {
+                   $stuattmt =  $this->StudentTestAttempt->find("first",array('conditions' =>
+                    array('StudentTestAttempt.student_id' => $user['Student']['id'],
+                      'StudentTestAttempt.test_id' => $tests['LessonElementMap']['element_id'],                    
+                      'StudentTestAttempt.deleted' => 0,)));
+                   if(!empty($stuattmt))
+                    $subscription['Ahapuzzler']['pastweek'][$j]['Lesson']['attempt'] = $stuattmt['StudentTestAttempt']['status'];
+                  else
+                    $subscription['Ahapuzzler']['pastweek'][$j]['Lesson']['attempt'] = 0;
+                 }
+                 }
+                 $j++;
+              }}}
+          }
+        }         
+       }
+       $this->set("json",json_encode($subscription));
+
+    }
+
+    public function student_view($id)
+    {
+     $this->layout = "ahaguru"; 
+    }
+
+    public function sdata_view($id)
+    {
+      $this->layout = "default";
+      $user = $this->Auth->user();
+      $lesson = $this->Lesson->findById($id);
+      $isthisweek = $this->Lesson->find("first",array('conditions' => 
+                array('Lesson.id' => $lessons['course_lesson_map']['lesson_id'],
+                       'Lesson.start_date <=' => date("Y-m-d", strtotime(date("Y-m-d")." +1 day")),
+                      'Lesson.end_date >='=> date("Y-m-d", strtotime(date("Y-m-d"))),
+                      'Lesson.start_date >=' => $weekStartDate,
+                      // 'Lesson.end_date <='=> $weekEndDate,
+                'Lesson.deleted' => 0))); 
+      $cours = $this->CourseLessonMap->findByLessonId($id);
+       $coursestd = $this->StdCourseMap->findByCourseId($cours['CourseLessonMap']['course_id']);
+      $elements = $this->LessonElementMap->find("all",array('conditions' =>
+        array('LessonElementMap.lesson_id' => $lesson['Lesson']['id'],
+          'LessonElementMap.deleted' => 0)));      
+      $ele=0;
+      foreach ($elements as $key => $value) {
+        if($value['LessonElementMap']['element_type'] == 1){
+          $test = $this->Test->findById($value['LessonElementMap']['element_id']);
+          if($test['Test']['questions'] != ""){
+        $lesson['element'][$ele] = $test;
+        $testattempt = $this->StudentTestAttempt->find("first",array('conditions' => array(
+          'StudentTestAttempt.test_id' => $value['LessonElementMap']['element_id'],
+          'StudentTestAttempt.student_id' => $user['Student']['id'],
+          'StudentTestAttempt.status' => 2,
+          'StudentTestAttempt.deleted' => 0)));
+        if(!empty($testattempt))
+          $lesson['element'][$ele]['attempt']  = $testattempt['StudentTestAttempt']['status'];          
+        else
+          $lesson['element'][$ele]['attempt']  = 0;          
+        $lesson['element'][$ele]['element_type']  =1;       
+        $ele++;   
+      }}
+      else if($value['LessonElementMap']['element_type'] == 2){
+       $cnpt =  $this->Concept->findById($value['LessonElementMap']['element_id']);       
+       if($cnpt['Concept']['slides'] != ""){
+        $lesson['element'][$ele] = $cnpt;
+        $conceptattempt = $this->StudentConceptAttempt->find("first",array('conditions' => array(
+          'StudentConceptAttempt.element_id' => $value['LessonElementMap']['element_id'],
+          'StudentConceptAttempt.student_id' => $user['Student']['id'],
+          'StudentConceptAttempt.status' => 2,
+          'StudentConceptAttempt.deleted' => 0)));
+        if(!empty($conceptattempt)){
+          $lesson['element'][$ele]['attempt']  = $conceptattempt['StudentConceptAttempt']['attempt'];          
+          $lesson['element'][$ele]['status']  = $conceptattempt['StudentConceptAttempt']['status'];          
+          $lesson['element'][$ele]['isMobileAttempt']  = $conceptattempt['StudentConceptAttempt']['isMobileAttempt'];         
+        }
+        else{
+          $lesson['element'][$ele]['attempt']  = 0;                  
+        $lesson['element'][$ele]['status']  = 0;          
+          $lesson['element'][$ele]['isMobileAttempt']  = 0;  
+          }       
+        $lesson['element'][$ele]['element_type']  =2;        
+        $ele++;
+      }
+      }
+      else if($value['LessonElementMap']['element_type'] == 3){
+        $exe = $this->Exercise->findById($value['LessonElementMap']['element_id']);
+        if($exe['Exercise']['slides'] != ""){
+        $lesson['element'][$ele] = $exe;
+        $exerciseattempt = $this->StudentExerciseAttempt->find("first",array('conditions' => array(
+          'StudentExerciseAttempt.element_id' => $value['LessonElementMap']['element_id'],
+          'StudentExerciseAttempt.student_id' => $user['Student']['id'],
+          // 'StudentExerciseAttempt.status' => 2,
+          'StudentExerciseAttempt.deleted' => 0)));
+        if(!empty($exerciseattempt)){
+          $lesson['element'][$ele]['attempt']  = $exerciseattempt['StudentExerciseAttempt']['attempt'];          
+          $lesson['element'][$ele]['status']  = $exerciseattempt['StudentExerciseAttempt']['status'];          
+          $lesson['element'][$ele]['isMobileAttempt']  = $exerciseattempt['StudentExerciseAttempt']['isMobileAttempt'];         
+        }
+        else{
+          $lesson['element'][$ele]['attempt']  = 0;          
+          $lesson['element'][$ele]['isMobileAttempt']  = 0;         
+          $lesson['element'][$ele]['status']  = 0;
+        }
+        $lesson['element'][$ele]['element_type']  = 3;
+        $ele++;        
+      }}
+      }      
+      $lesson['class'] = $coursestd['StdCourseMap']['standard_id'];
+      if(!empty($isthisweek))
+        $lesson['thisweek'] = 1;
+      else
+        $lesson['thisweek'] = 0;
+       $this->set("json",json_encode($lesson));
+    }
+
+    public function subscribe(){
+         $this->autoRender = false;   
+      $this->layout = "default";
+      $data = $this->request->data;
+      $student = $this->Auth->user();
+         $subscription = array();
+        if($data['standard'] > 4)
+          $std = 1;
+        else
+          $std = $data['standard'];
+         $con = array('StdCourseMap.course_id' => array(44,45,46,47),
+          'StdCourseMap.standard_id' => $std);
+         $course_subscribed = $this->StdCourseMap->find("first",array('conditions' => $con));
+         $studsubscrption = $this->AgPuzzlerSubscription->find("all",array('conditions' => 
+            array('AgPuzzlerSubscription.STUDENT_ID' =>$student['Student']['id'],
+              'AgPuzzlerSubscription.COURSE_ID' => $course_subscribed['StdCourseMap']['course_id'])));        
+           $datediff = date_diff(date_create("31-12-2015"),date_create(date("Y-m-d H:i:s")));              
+          $datediff = ($datediff->days)+1;
+          $week  = round($datediff / 7);
+          $week = $week + 1;
+          if(empty($studsubscrption)){
+         $subscription['COURSE_ID'] = $course_subscribed['StdCourseMap']['course_id'];
+         $subscription['STUDENT_ID'] = $student['Student']['id'];
+         $subscription['SUBSCRIPTION_PERIOD'] = $week;
+         $subscription['SUBSCRIPTION_DATE'] = date('Y-m-d H:i:s');
+         $this->AgPuzzlerSubscription->save($subscription);
+        }
+          if(is_numeric($data['school_id'])){
+            $school = $this->School->find("first",array('conditions' => array(
+              'School.SCHOOL_ID' => $data['school_id'])));            
+            $data['school_name'] = $school['School']['SCHOOL_NAME'];              
+            $data['id'] = $student['Student']['id'];
+            $this->Student->save($data);
+          }
+          else{
+            $school = $this->School->find("first",array('conditions' => array(
+              'School.SCHOOL_NAME LIKE' => "%".$data['school_name']."%")));            
+            if(empty($school)){
+              $sch['SCHOOL_NAME'] = $data['school_name'];
+              $this->School->save($sch);
+              $sch_id = $this->School->id;              
+             $data['id'] = $student['Student']['id'];
+            $this->Student->save($data);
+            }
+            else{
+              $data['school_name'] = $school['School']['SCHOOL_NAME'];              
+            $data['id'] = $student['Student']['id'];
+            $this->Student->save($data);
+            }
+          }
+        $this->redirect("/student/agpuzzler");
+    }
+
+    public function sdata_issubscribed(){
+      $this->layout = "default";      
+      $user = $this->Auth->user(); 
+      $subscription_exist= array();           
+       $studsubscrption = $this->AgPuzzlerSubscription->find("all",array('conditions' => 
+            array('AgPuzzlerSubscription.STUDENT_ID' => $user['Student']['id'])));       
+       if(empty($studsubscrption))
+        $isSubscribed = 0;        
+      else        
+        $isSubscribed = 1;        
+      $this->set("json",json_encode($isSubscribed));
+  }
+}

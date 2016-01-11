@@ -1,0 +1,789 @@
+<?php
+
+class CourseController extends AppController {
+
+    public $name = "Course";
+
+    public $uses = array('Course','StudentTestAttempt','StudentCourseMap','Student','Standard','StudentExerciseAttempt','StudentConceptAttempt','Concept','StudentLessonSkip',
+               'Lesson','StudentLessonMap','StudentSkipLessons','CourseType','CourseVisibility','PromotionalCoupon','Slide','Question','HinduChallengeScore',
+               'CourseLessonMap','LessonElementMap','StdCourseMap','StudentCoursePayment','StudentTestAttempt','Exercise','Test','HallticketReg');
+
+    public function beforeFilter() {
+	parent::beforeFilter();
+    $this->Auth->allow("index","getlesson","student_view","online_courses","getcoursecode");
+	$this->layout = "default";
+    }
+
+    public function admin_index() {
+	     $this->layout = "ahaguru";
+    }
+
+  public function adata_getlessoncount($id) {  
+    $lessons = $this->CourseLessonMap->find("all",array('conditions'=>array(
+     'CourseLessonMap.course_id' => $id,
+     'CourseLessonMap.published' => 1,
+     'CourseLessonMap.deleted' => 0
+      )));
+    foreach ($lessons as $key => $les) {      
+      $slide_present = 0;
+      $ele = $this->LessonElementMap->find("all",array('conditions'=>array(
+     'LessonElementMap.lesson_id' => $les['CourseLessonMap']['lesson_id'],
+     'LessonElementMap.deleted' => 0
+      )));
+      if(empty($ele)){
+        unset($lessons[$key]);
+      }
+      else{
+        foreach ($ele as $value) {
+         if($value['LessonElementMap']['element_type'] == 2){
+         $cnpt = $this->Concept->find("first",array('conditions'=>array(
+          'Concept.id' => $value['LessonElementMap']['element_id'],
+          'Concept.deleted' => 0
+      )));
+         if($cnpt['Concept']['slides'] != "")
+          $slide_present++;
+       }
+         else if($value['LessonElementMap']['element_type'] == 3){
+         $exer = $this->Exercise->find("first",array('conditions'=>array(
+     'Exercise.id' => $value['LessonElementMap']['element_id'],
+     'Exercise.deleted' => 0
+      )));
+      
+         if($exer['Exercise']['slides'] != "")
+              $slide_present++;
+       }
+        else if($value['LessonElementMap']['element_type'] == 1){
+         $test = $this->Test->find("first",array('conditions'=>array(
+     'Test.id' => $value['LessonElementMap']['element_id'],
+     'Test.deleted' => 0
+      )));
+        if($test['Test']['questions'] != "")
+          $slide_present++; 
+       }
+        }
+        if($slide_present == 0){          
+          unset($lessons[$key]);
+        }
+        }
+      }    
+    $this->set("json", json_encode($lessons));
+    }
+  
+  
+public function adata_types(){ 
+   $types = $this->CourseType->find("all");   
+     $this->set("json",json_encode($types));
+   }
+
+   public function adata_visibility(){ 
+   $types = $this->CourseVisibility->find("all");   
+     $this->set("json",json_encode($types));
+   }
+  
+      public function adata_index() {
+      $conditions = array(
+        "Course.deleted =" => 0,
+        "Course.types =" => 1
+  //      "Course.start_date <="=> date("Y-m-d", strtotime(date("Y-m-d")." +1 day")),
+    //    "Course.end_date >="=> date("Y-m-d"),
+      );
+      $this->set("json",json_encode($this->Course->find("all", array('conditions' => $conditions))));
+               }
+    
+      public function adata_batch() {
+        $cond= array(
+          'StudentCoursePayment.category' => 1
+                 );
+      $batches = $this->StudentCoursePayment->find('all',array('conditions'=>$cond));
+         $this->set("json",json_encode($batches));
+    }
+
+      /* get course*/    
+    public function adata_courses() {
+      $conditions = array(
+        "Course.deleted =" => 0,
+          "Course.types =" => 1
+             );
+           $course = $this->Course->find("all", array('conditions' => $conditions));
+              
+              $count = 0;
+      foreach($course as $cour){
+         $standard_id = $this->StdCourseMap->query("select standard_id from std_course_map where course_id = ".$cour['Course']['id']." and deleted = 0");
+   
+              $cour['Course']['standard'] = $standard_id[0]['std_course_map']['standard_id'];
+                $course[$count++] = $cour;   
+    }
+      $this->set("json",json_encode($course));
+               }
+
+    /* get hindu course*/    
+    public function adata_get_hinducourse() {
+      $conditions = array(
+        "Course.deleted =" => 0,
+          "Course.types =" => 1,
+          "Course.id" => array(2,14,5,35)
+             );
+           $course = $this->Course->find("all", array('conditions' => $conditions));
+              
+              $count = 0;
+      foreach($course as $cour){
+         $standard_id = $this->StdCourseMap->query("select standard_id from std_course_map where course_id = ".$cour['Course']['id']." and deleted = 0");
+   
+              $cour['Course']['standard'] = $standard_id[0]['std_course_map']['standard_id'];
+                $course[$count++] = $cour;   
+    }
+      $this->set("json",json_encode($course));
+               }
+
+         /* get remaining course to merge */    
+    public function adata_list_courses($id) {
+      $conditions = array(
+        "Course.deleted =" => 0,
+          "Course.id !=" => $id
+             );
+           $course = $this->Course->find("all", array('conditions' => $conditions));
+              
+              $count = 0;
+      foreach($course as $cour){
+         $standard_id = $this->StdCourseMap->query("select standard_id from std_course_map where course_id = ".$cour['Course']['id']." and deleted = 0");
+   
+              $cour['Course']['standard'] = $standard_id[0]['std_course_map']['standard_id'];
+                $course[$count++] = $cour;   
+    }
+      $this->set("json",json_encode($course));
+               }
+       
+             
+  public function adata_promo_course() {
+    $con = array(
+        "PromotionalCoupon.deleted =" => 0
+             );
+      $promo_course = $this->PromotionalCoupon->find("all", array('conditions' => $con,'group' => array('course_id')));
+      $count = 0;
+      foreach ($promo_course as $crs) {
+      $conditions = array(
+        "Course.id =" => $crs['PromotionalCoupon']['course_id'],
+        "Course.deleted =" => 0
+             );
+         $course = $this->Course->find("first", array('conditions' => $conditions));                            
+         $standard_id = $this->StdCourseMap->query("select standard_id from std_course_map where course_id = ".$course['Course']['id']." and deleted = 0");   
+         $course['Course']['standard'] = $standard_id[0]['std_course_map']['standard_id'];
+         $courses[$count++] = $course;       
+       }
+        $this->set("json",json_encode($courses));
+      }             
+
+     /* add course*/
+    public function adata_add() {
+	if($this->request->is("post")) {
+	    $data = $this->request->data;
+
+         $date = date_create_from_format("m\/d\/Y", $this->data['start_date']);
+	    $data['start_date'] = date_format($date, 'Y-m-d H:i:s');
+	    $date = date_create_from_format("m\/d\/Y", $this->data['end_date']);
+	    $data['end_date'] = date_format($date, 'Y-m-d H:i:s');
+      $des = split("\n", $data['description']);
+      foreach ($des as $key => $value) {
+    
+        $des[$key] = "<p>".$value."</p>";
+      }
+      $data['description'] = implode("",$des);
+      $data['types'] = 1;
+         $add = $this->Course->save($data);
+         if($add){
+         	$data['course_id'] = $this->Course->id;
+                  $data['standard_id']= $data['std'];
+            		$this->StdCourseMap->save($data);}
+        
+        
+	    $this->redirect("/admin/course");
+	}
+    }
+
+    public function adata_addicon()
+    {
+     if($this->request->is("post")) {
+      $data = $this->request->data;
+      $folder = "img";
+        $folder_url = WWW_ROOT.$folder;
+        $rel_url = $folder;
+        $slide = str_replace(' ', '_', $this->data['File']['Content']['name']);
+        if(!file_exists($folder_url.'/'.$slide)) {
+           //$this->AdminSlides->query("insert into admin_slides values(null,'$slide');");
+          $data['icon'] = $slide;
+          $data['File']['Content']['name'] = $slide;
+        } 
+        else {
+           ini_set('date.timezone', 'Asia/Kolkata');
+           $now = date('Y-m-d-His');
+           $filename = $now.$slide;
+           $data['icon'] = $filename;
+           $data['File']['Content']['name'] = $filename;
+           //$this->AdminSlides->query("insert into admin_slides values(null,'$filename');");
+        }
+        $this->uploadFiles("img", $this->data['File']);
+       $this->Course->save($data);
+       $this->redirect("/admin/course");
+
+    }
+    }
+
+       /* Edit Course */
+    public function adata_edit($id) {
+	if($this->request->is("POST")) {
+	    $data = $this->request->data;
+      
+         $date = date_create_from_format("m\/d\/Y", $this->data['start_date']);
+	    $data['start_date'] = date_format($date, 'Y-m-d H:i:s');
+	    $date = date_create_from_format("m\/d\/Y", $this->data['end_date']);
+	    $data['end_date'] = date_format($date, 'Y-m-d H:i:s');
+      $des = split("\n", $data['description']);
+     
+//      $data['description'] = "<pre>".$data['description']."</pre>";
+     
+      foreach ($des as $key => $value) {
+            $des[$key] = "<p>".$value."</p>";
+      }
+      $data['description'] = implode("",$des);
+      $this->Course->id = $id;
+	    $add = $this->Course->save($data);
+         if($add){
+         	$data['course_id'] = $this->Course->id;
+   		$this->StdCourseMap->query("update std_course_map set standard_id = ".$data['std']." where course_id = ".$data['course_id']);}
+	    $this->redirect("/admin/course");
+	}
+    }
+
+   /* Delete course */
+    public function adata_delete($courseid) {
+      if($this->Course->isSubscribed($courseid)) {
+        $this->set("json", json_encode(array( "message" => "Course is under active subscription, Please delete all 
+                          student subscription and try deleting again."))); 
+      } else {
+        if($this->Course->setDelete($courseid)){
+          $this->StdCourseMap->setUpdate($courseid);
+          $this->set("json", json_encode( array( "message" => "deleted") ));}
+        else 
+          $this->set("json", json_encode( array("message" => "error") ));
+      }
+    }
+
+   public function student_index() {
+      $this->layout = "ahaguru";
+      $user = $this->Auth->user("Student");            
+      if($this->StudentCourseMap->find("first",array('conditions'=>
+          array(
+            'StudentCourseMap.student_id' => $user['id'],
+            // 'StudentCourseMap.comments LIKE' => '%hindu%',
+            'StudentCourseMap.challenge_type' => 'PC2',
+            'StudentCourseMap.deleted' => 0,
+            'StudentCourseMap.payment' => 2))) && !($this->HallticketReg->findByhtStudentId($user['id'])))
+          $this->redirect("/student/hallticket");
+      else         
+        $this->redirect("/student/course/1"); 
+      // else      
+      //   $this->redirect("/student/hallticket");
+    } 
+
+
+  public function student_view($id) {
+	$this->layout = "ahaguru";
+  if(!($this->Auth->user())){
+    $this->redirect("/online");
+    }    
+  }
+
+ public function sdata_view($status) {
+	 $this->layout = "default";   
+   $user = $this->Auth->user();
+   // $coure = array();
+   $student_id= $user['Student']['id'];
+   $count = 0;
+   $courses = $this->StudentCourseMap->getmycourse($student_id);   
+   foreach($courses as $course){     
+      $completed = 0;$les=0;$z=0;
+      $cours = $this->Course->findById($course['StudentCourseMap']['course_id']);
+      $standard = $this->StdCourseMap->findByCourseId($course['StudentCourseMap']['course_id']);
+      $std = $this->Standard->query("select name from standards where id =".$standard['StdCourseMap']['standard_id']);         
+      $coure[$count] = $cours;
+      $coure[$count]['Course']['standard']=$std[0]['standards']['name'];
+      $coure[$count]['Course']['payment']=$course['StudentCourseMap']['payment'];
+      $hinduchalleng = $this->StudentCourseMap->find("first",array('conditions'=>
+        array(
+          'StudentCourseMap.student_id'=> $student_id,
+          'StudentCourseMap.deleted'=> 0,
+          // 'StudentCourseMap.comments LIKE' => "%Hindu%"
+          'StudentCourseMap.challenge_type' => "PC2"
+          )));
+      $hinduchallenghallticketreg = $this->HallticketReg->find("first",array('conditions'=>
+        array(
+          'HallticketReg.HT_STUDENT_ID'=> $student_id                  
+          )));
+      $hinduchallengescore = $this->HinduChallengeScore->find("first",array('conditions'=>
+        array(
+          'HinduChallengeScore.STUDENT_ID'=> $student_id                  
+          )));
+      $con = array(
+       'CourseLessonMap.course_id' => $course['StudentCourseMap']['course_id'],
+       'CourseLessonMap.deleted' => 0
+      );
+      $course_id = $course['StudentCourseMap']['course_id'];
+
+         $lessons = $this->Course->getAllLessons($course_id,$student_id);
+         $marker = $this->StudentLessonMap->find("first",array('conditions'=>array(
+          'StudentLessonMap.student_id =' => $student_id,
+          'StudentLessonMap.course_id =' => $course_id,
+          'StudentLessonMap.deleted =' => 0
+          )));
+                   // error_log("marker".print_r($marker,true));
+       $skip_count = $this->StudentSkipLessons->query("select skip_lessons from student_skip_lessons where student_id=".$student_id." and course_id=".$course_id." and deleted = 0");
+         $skip_less_count = explode(",", $skip_count[0]['student_skip_lessons']['skip_lessons']); 
+         if(!empty($lessons))
+         {
+            $j=0;
+            foreach($lessons as $lesson)
+             {
+            
+                     $testcount = 0;
+               $cnptcount = 0;     $exercount = 0;
+              $coure[$count]['Lesson'][$j] = $lesson;
+
+                   $conditions = array(
+              'LessonElementMap.lesson_id =' => $lesson['Lesson']['id'],
+              'LessonElementMap.deleted =' => 0
+            );
+            $elements = $this->LessonElementMap->find("all", array('conditions' => $conditions));
+
+                foreach ($elements as $elem){                 
+              if($elem['LessonElementMap']['element_type'] == 1){
+                $tests = $this->Test->findById($elem['LessonElementMap']['element_id']);
+                if($tests['Test']['questions'] != ""){
+                 $conditions = array(
+                'StudentTestAttempt.student_id =' => $student_id,
+                'StudentTestAttempt.test_id =' => $tests['Test']['id'],
+                'StudentTestAttempt.status =' => 2,
+                'StudentTestAttempt.deleted =' => 0
+               );
+               $studenttestattempt = $this->StudentTestAttempt->find("first", array('conditions' => $conditions));
+              if(!empty($studenttestattempt)){
+                $testattempts[$testcount] = $studenttestattempt;
+                 $testcount ++;
+                 }}
+               else{
+                   $testcount ++;
+                   }
+              }else  if($elem['LessonElementMap']['element_type'] == 2){
+                $concept = $this->Concept->findById($elem['LessonElementMap']['element_id']);
+                           if($concept['Concept']['slides'] != ""){
+                 $conditions = array(
+                'StudentConceptAttempt.student_id =' => $student_id,
+                'StudentConceptAttempt.element_id =' => $concept['Concept']['id'],
+                'StudentConceptAttempt.status =' => 2,
+                'StudentConceptAttempt.deleted =' => 0
+               );
+               $studentcnptattempt = $this->StudentConceptAttempt->find("first", array('conditions' => $conditions));
+              if(!empty($studentcnptattempt)){
+                $cnptattempts[$cnptcount] = $studentcnptattempt;
+                 $cnptcount ++;
+                 }}
+               else{
+                   $cnptcount ++;
+                   }
+                 
+             }else  if($elem['LessonElementMap']['element_type'] == 3){
+                     $exe = $this->Exercise->findById($elem['LessonElementMap']['element_id']);
+                if($exe['Exercise']['slides'] != ""){
+                 $conditions = array(
+                'StudentExerciseAttempt.student_id =' => $student_id,
+                'StudentExerciseAttempt.element_id =' => $exe['Exercise']['id'],
+                'StudentExerciseAttempt.status =' => 2,
+                'StudentExerciseAttempt.deleted =' => 0
+               );
+               $studentexeattempt = $this->StudentExerciseAttempt->find("first", array('conditions' => $conditions));
+              if(!empty($studentexeattempt)){
+                $exerattempts[$exercount] = $studentexeattempt;
+                 $exercount ++;
+                 }}
+               else{
+                   $exercount ++;
+                   }}}
+            
+                 if (!(in_array($lesson['Lesson']['id'], $skip_less_count))){              
+             if(!empty($marker)){
+              if($marker['StudentLessonMap']['lesson_id'] == $lesson['Lesson']['id'] && count($elements) != $testcount+$exercount+$cnptcount && $les==0){
+                 error_log("condition1");
+                     $coure[$count]['Lesson'][$j]['Lesson']['here'] = 1; 
+                   $this->StudentLessonMap->savemarker($student_id,$course_id,$lesson['Lesson']['id']);
+                   $les++;
+
+                } 
+                else if($marker['StudentLessonMap']['lesson_id'] == $lesson['Lesson']['id'] && count($elements) == $testcount+$exercount+$cnptcount && $les==0){
+                  error_log("condition2");
+                                    $z=$j+1;
+                 }   
+                else if ($z >0 && $z == $j){
+                  error_log("condition3");
+                    $this->StudentLessonMap->savemarker($student_id,$course_id,$lesson['Lesson']['id']);
+                    $coure[$count]['Lesson'][$j]['Lesson']['here'] = 1; 
+                    $this->StudentLessonMap->savemarker($student_id,$course_id,$lesson['Lesson']['id']);
+                    $this->redirect("/sdata/course/1");
+                    $les++;
+                }
+               else if(count($elements) != $testcount+$exercount+$cnptcount && $les==0){
+                error_log("condition4");
+                        $mar =  $this->StudentLessonMap->savemarker($student_id,$course_id,$lesson['Lesson']['id']);
+                    $this->redirect("/sdata/course/1");
+                                     $les++;
+                      } 
+              }
+              
+           else if(count($elements) != $testcount+$exercount+$cnptcount && $les==0){
+            error_log("condition5");
+                            $coure[$count]['Lesson'][$j]['Lesson']['here'] = 1; 
+                    $this->StudentLessonMap->savemarker($student_id,$course_id,$lesson['Lesson']['id']);
+                                      $les++;
+
+                      } 
+                   }
+
+                  $coure[$count]['Lesson'][$j]['Lesson']['attempt'] = $testcount + $exercount + $cnptcount;
+                  $coure[$count]['Lesson'][$j]['Lesson']['elements'] = count($elements);
+           if( $coure[$count]['Lesson'][$j]['Lesson']['attempt'] == $coure[$count]['Lesson'][$j]['Lesson']['elements'])
+          $completed ++;
+    
+                 $j++;
+               }
+        }
+          $coure[$count]['Course']['completed'] = $completed;
+          $count++;
+             
+       }     
+    
+       
+      if(!empty($hinduchalleng))
+        $coures['hindu_challenge'] = 1;
+      else
+        $coures['hindu_challenge'] = 0;
+      if(!empty($hinduchallenghallticketreg))
+          $coures['hallticket_reg'] = 1;
+        else
+          $coures['hallticket_reg'] = 0;
+        if(!empty($hinduchallengescore))
+          $coures['challenge_score'] = $hinduchallengescore;
+        $coures['Course'] = $coure;        
+       $this->set("json", json_encode($coures));
+  
+ }
+
+     public function adata_student_buyable_courses($studentid) {
+      $this->set("json", json_encode($this->Course->getAllCourses($studentid)));
+    }
+
+   public function sdata_standard(){
+   $this->layout="default";
+   
+     $this->set("json", json_encode($this->Standard->getallstandards()));
+
+   }
+
+   public function adata_standard(){
+   $this->layout="default";
+   
+     $this->set("json", json_encode($this->Standard->getallstandards()));
+
+   }
+ 
+    public function adata_add_course($studentid) {
+        $data = $this->request->data;
+        $courseid = $data['courseid'];
+        $this->Course->mapStudentCourse($studentid, $courseid);
+            $this->set("json", json_encode(array("message"=>"success")));
+    }
+
+ public function getlesson($id) {
+  $course_modules = $this->CourseLessonMap->query("select * from course_lesson_map where course_id=$id and deleted =0 and published = 1 and srno!=0 order by srno ;");
+  if(empty($course_modules)){
+   $course_modules = $this->CourseLessonMap->query("select * from course_lesson_map where course_id=$id and deleted = 0 and published = 1 order by published_date;");}  
+$conditions = array(
+  'LessonElementMap.lesson_id =' => $course_modules[0]['course_lesson_map']['lesson_id'],
+  'LessonElementMap.element_type ='=> 2,
+  'LessonElementMap.deleted =' =>0
+  );
+$lessons = $this->LessonElementMap->find("first",array('conditions'=>$conditions));
+if(!(empty($lessons)))
+  $this->redirect("/student/concept/".$lessons['LessonElementMap']['element_id']);
+else if(empty($lessons)){
+  $conditions = array(
+  'LessonElementMap.lesson_id =' => $course_modules[0]['course_lesson_map']['lesson_id'],
+  'LessonElementMap.element_type ='=> 3,
+  'LessonElementMap.deleted =' =>0
+  );
+$lessons= $this->LessonElementMap->find("first",array('conditions'=>$conditions));
+if(!(empty($lessons)))
+  $this->redirect("/student/exercise/".$lessons['LessonElementMap']['element_id']);
+
+else if(empty($lessons)){
+  $conditions = array(
+  'LessonElementMap.lesson_id =' => $course_modules[0]['course_lesson_map']['lesson_id'],
+  'LessonElementMap.element_type ='=> 1,
+  'LessonElementMap.deleted =' =>0
+  );
+$lessons = $this->LessonElementMap->find("first",array('conditions'=>$conditions));
+$this->redirect("/student/taketest/".$lessons['LessonElementMap']['element_id']);
+}}
+
+ }
+
+   public function online_courses(){
+  $this->layout = "default";
+
+      $count = 0;
+      $standard = $this->Standard->find('all',array( 'order' => array('Standard.name' => 'ASC')));      
+      foreach ($standard as $key => $value) {
+        $condi = array(        
+        "StdCourseMap.standard_id =" =>$value['Standard']['id'],          
+      );
+        $stdcourse = $this->StdCourseMap->find("all", array('conditions' => $condi));        
+        foreach ($stdcourse as  $crs) {
+        $conditions = array(
+        "Course.deleted =" => 0,
+        "Course.id =" =>$crs['StdCourseMap']['course_id'],
+        "Course.types =" => 1,        
+        "Course.course_visibility =" => 1        
+      );
+      $cour = $this->Course->find("first", array('conditions' => $conditions));      
+      if(!empty($cour)){
+      $cour['Course']['standard'] = $crs['StdCourseMap']['standard_id'];      
+      $lesson_map = $this->CourseLessonMap->query("select * from course_lesson_map where course_id=".$cour['Course']['id']." and deleted =0 and published = 1 and srno!=0 order by srno ;");
+     if(empty($lesson_map)){
+      $lesson_map = $this->CourseLessonMap->query("select * from course_lesson_map where course_id=".$cour['Course']['id']." and deleted = 0 and published = 1 order by published_date;");
+      }      
+      $j=0;
+      $slides = "";
+      $videos = "";
+      $questions = "";
+      $modules =  array();      
+      foreach($lesson_map as $les) {
+            $mod = $this->Lesson->findById($les['course_lesson_map']['lesson_id']);                  
+       if(!empty($mod)){
+        $elemap = $this->LessonElementMap->find("all", array('conditions' =>
+       array('LessonElementMap.lesson_id'=>$mod['Lesson']['id'],
+        'LessonElementMap.deleted'=>0)));
+        if(!empty($elemap)){
+          foreach ($elemap as $key => $map) {
+            if($map['LessonElementMap']['element_type'] ==3){
+        $elements[$key]= $this->Exercise->find("first",array('conditions'=> array(
+        "Exercise.deleted =" => 0,
+        "Exercise.id =" => $map['LessonElementMap']['element_id']
+      )));
+    
+  if($questions !="")
+  $questions.=",".$elements[$key]['Exercise']['slides'];
+  else
+    $questions.=$elements[$key]['Exercise']['slides'];
+        
+          }
+            else if($map['LessonElementMap']['element_type'] ==2){
+ $elements[$key] = $this->Concept->find("first",array('conditions'=> array(
+        "Concept.deleted =" => 0,
+        "Concept.id =" => $map['LessonElementMap']['element_id']
+      )));
+ if($slides !="")
+  $slides.= ",".$elements[$key]['Concept']['slides'];
+else
+  $slides.= $elements[$key]['Concept']['slides'];
+            }
+            else{
+ $elements[$key] = $this->Test->find("first",array('conditions'=> array(
+        "Test.deleted =" => 0,
+        "Test.id =" => $map['LessonElementMap']['element_id']
+      )));
+  if($questions !="")
+  $questions.=",".$elements[$key]['Test']['questions'];
+  else
+    $questions.=$elements[$key]['Test']['questions'];
+            }
+
+          }
+      $modules['Lessons'][$j] = $mod;
+       $j++;
+      }}}
+      $slideids = split(",",$slides);
+      foreach ($slideids as $ids) {
+        $video = $this->Slide->find("first",array('conditions'=> array(
+        "Slide.id =" => $ids,
+        "Slide.slide_type"=>3
+      )));
+        $ques = $this->Slide->find("first",array('conditions'=> array(
+        "Slide.id =" => $ids,
+        "Slide.slide_type"=>5
+      )));              
+        if(!empty($video)){
+        if($videos != ""){
+          $videos.=",".$ids;
+        }
+        else
+          $videos.=$ids;
+      }
+      else if(!empty($ques)){        
+        /*Concept slides question*/             
+        if($questions !="")
+          $questions.=",".$ids;
+        else
+          $questions.=$ids;
+      }
+      }
+      $queslidids = split(",",$questions);
+      foreach ($queslidids as $quesslide) {
+        $slidequesti = $this->Slide->find("first",array('conditions'=> array(
+        "Slide.id =" => $quesslide)));
+        if(!empty($slidequesti)){
+      $questi = $this->Question->find("first",array('conditions'=> array(
+        "Question.id =" => $slidequesti['Slide']['content']
+      )));
+        /*if question has video solutions*/        
+        if(!empty($questi) && $questi['Question']['solution_video'] != ""){          
+          if($videos !="")
+          $videos.=",".$quesslide;
+        else
+          $videos.=$quesslide;
+      }
+      }
+      }      
+      // print_r($modules);
+      $cour['Course']['Lessons'] = $modules;
+      if($videos !="")
+      $cour['Course']['videos'] = count(split(",",$videos));
+      else
+      $cour['Course']['videos'] = 0;
+      if($questions !="")
+      $cour['Course']['questions'] = count(split(",",$questions));
+      else
+        $cour['Course']['questions'] = 0;
+      $course[$count++] = $cour;   
+        }}
+        
+      }
+//       foreach($course as $cour){
+//       $standard_id = $this->StdCourseMap->query("select standard_id from std_course_map where course_id = ".$cour['Course']['id']." and deleted = 0");
+//       $cour['Course']['standard'] = $standard_id[0]['std_course_map']['standard_id'];
+//       $lesson_map = $this->CourseLessonMap->query("select * from course_lesson_map where course_id=".$cour['Course']['id']." and deleted =0 and published = 1 and srno!=0 order by srno ;");
+//      if(empty($lesson_map)){
+//       $lesson_map = $this->CourseLessonMap->query("select * from course_lesson_map where course_id=".$cour['Course']['id']." and deleted = 0 and published = 1 order by published_date;");
+//       }
+//       $j=0;
+//       $slides = "";
+//       $videos = "";
+//       $questions = "";
+//       $modules =  array();      
+//       foreach($lesson_map as $les) {
+//             $mod = $this->Lesson->findById($les['course_lesson_map']['lesson_id']);            
+//        if(!empty($mod)){
+
+//         $elemap = $this->LessonElementMap->find("all", array('conditions' =>
+//        array('LessonElementMap.lesson_id'=>$mod['Lesson']['id'],
+//         'LessonElementMap.deleted'=>0)));
+//         if(!empty($elemap)){
+//           foreach ($elemap as $key => $map) {
+//             if($map['LessonElementMap']['element_type'] ==3){
+//         $elements[$key]= $this->Exercise->find("first",array('conditions'=> array(
+//         "Exercise.deleted =" => 0,
+//         "Exercise.id =" => $map['LessonElementMap']['element_id']
+//       )));
+    
+//   if($questions !="")
+//   $questions.=",".$elements[$key]['Exercise']['slides'];
+//   else
+//     $questions.=$elements[$key]['Exercise']['slides'];
+        
+//           }
+//             else if($map['LessonElementMap']['element_type'] ==2){
+//  $elements[$key] = $this->Concept->find("first",array('conditions'=> array(
+//         "Concept.deleted =" => 0,
+//         "Concept.id =" => $map['LessonElementMap']['element_id']
+//       )));
+//  if($slides !="")
+//   $slides.= ",".$elements[$key]['Concept']['slides'];
+// else
+//   $slides.= $elements[$key]['Concept']['slides'];
+//             }
+//             else{
+//  $elements[$key] = $this->Test->find("first",array('conditions'=> array(
+//         "Test.deleted =" => 0,
+//         "Test.id =" => $map['LessonElementMap']['element_id']
+//       )));
+//   if($questions !="")
+//   $questions.=",".$elements[$key]['Test']['questions'];
+//   else
+//     $questions.=$elements[$key]['Test']['questions'];
+//             }
+
+//           }
+//       $modules['Lessons'][$j] = $mod;
+//        $j++;
+//       }}}
+//       $slideids = split(",",$slides);
+//       foreach ($slideids as $ids) {
+//         $video = $this->Slide->find("first",array('conditions'=> array(
+//         "Slide.id =" => $ids,
+//         "Slide.slide_type"=>3
+//       )));
+//         $ques = $this->Slide->find("first",array('conditions'=> array(
+//         "Slide.id =" => $ids,
+//         "Slide.slide_type"=>5
+//       )));              
+//         if(!empty($video)){
+//         if($videos != ""){
+//           $videos.=",".$ids;
+//         }
+//         else
+//           $videos.=$ids;
+//       }
+//       else if(!empty($ques)){        
+//         /*Concept slides question*/             
+//         if($questions !="")
+//           $questions.=",".$ids;
+//         else
+//           $questions.=$ids;
+//       }
+//       }
+//       $queslidids = split(",",$questions);
+//       foreach ($queslidids as $quesslide) {
+//         $slidequesti = $this->Slide->find("first",array('conditions'=> array(
+//         "Slide.id =" => $quesslide)));
+//         if(!empty($slidequesti)){
+//       $questi = $this->Question->find("first",array('conditions'=> array(
+//         "Question.id =" => $slidequesti['Slide']['content']
+//       )));
+//         /*if question has video solutions*/        
+//         if(!empty($questi) && $questi['Question']['solution_video'] != ""){          
+//           if($videos !="")
+//           $videos.=",".$quesslide;
+//         else
+//           $videos.=$quesslide;
+//       }
+//       }
+//       }      
+//       $cour['Course']['Lessons'] = $modules;
+//       if($videos !="")
+//       $cour['Course']['videos'] = count(split(",",$videos));
+//       else
+//       $cour['Course']['videos'] = 0;
+//       if($questions !="")
+//       $cour['Course']['questions'] = count(split(",",$questions));
+//       else
+//         $cour['Course']['questions'] = 0;
+//       $course[$count++] = $cour;   
+//       }
+      //$this->set("standard", $this->Standard->find('all'));
+      $this->set("json",json_encode($course));
+}
+
+public function getcoursecode(){
+  $this->layout="default";
+   $code = $this->Session->read("coupon_code");
+     $this->set("json",json_encode($code));
+}  
+}
+ 
+
