@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/User
+END
+adata_delete.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/User/adata_delete.ctp
+END
+admin_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/User/admin_index.ctp
+END
+adata_permanent_delete.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/User/adata_permanent_delete.ctp
+END
+adata_usertags.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/User/adata_usertags.ctp
+END
+adata_addstudent.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/User/adata_addstudent.ctp
+END

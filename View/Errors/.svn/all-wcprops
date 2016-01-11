@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Errors
+END
+error400.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Errors/error400.ctp
+END
+error500.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Errors/error500.ctp
+END

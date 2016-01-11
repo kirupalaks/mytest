@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/TakeTest
+END
+admin_gethint.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/TakeTest/admin_gethint.ctp
+END
+student_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/ahaguru3/!svn/ver/452/trunk/webapp/app/View/TakeTest/student_index.ctp
+END
+student_gethint.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/TakeTest/student_gethint.ctp
+END

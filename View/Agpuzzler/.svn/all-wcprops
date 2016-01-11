@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/ahaguru3/!svn/ver/522/trunk/webapp/app/View/Agpuzzler
+END
+student_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/ahaguru3/!svn/ver/522/trunk/webapp/app/View/Agpuzzler/student_view.ctp
+END
+sdata_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ahaguru3/!svn/ver/522/trunk/webapp/app/View/Agpuzzler/sdata_view.ctp
+END
+student_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ahaguru3/!svn/ver/669/trunk/webapp/app/View/Agpuzzler/student_index.ctp
+END
+sdata_issubscribed.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/ahaguru3/!svn/ver/631/trunk/webapp/app/View/Agpuzzler/sdata_issubscribed.ctp
+END

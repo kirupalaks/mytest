@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Promotional
+END
+adata_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/ahaguru3/!svn/ver/273/trunk/webapp/app/View/Promotional/adata_view.ctp
+END
+verify_coupon.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/ahaguru3/!svn/ver/278/trunk/webapp/app/View/Promotional/verify_coupon.ctp
+END
+adata_delete.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/ahaguru3/!svn/ver/273/trunk/webapp/app/View/Promotional/adata_delete.ctp
+END
+adata_status.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/ahaguru3/!svn/ver/273/trunk/webapp/app/View/Promotional/adata_status.ctp
+END
+adata_edit.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/ahaguru3/!svn/ver/273/trunk/webapp/app/View/Promotional/adata_edit.ctp
+END
+adata_coupons.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/ahaguru3/!svn/ver/326/trunk/webapp/app/View/Promotional/adata_coupons.ctp
+END
+adata_add.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ahaguru3/!svn/ver/273/trunk/webapp/app/View/Promotional/adata_add.ctp
+END
+admin_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Promotional/admin_view.ctp
+END

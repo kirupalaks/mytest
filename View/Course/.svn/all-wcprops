@@ -1,0 +1,155 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/ahaguru3/!svn/ver/349/trunk/webapp/app/View/Course
+END
+adata_promo_course.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/ahaguru3/!svn/ver/326/trunk/webapp/app/View/Course/adata_promo_course.ctp
+END
+adata_getlessoncount.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/ahaguru3/!svn/ver/273/trunk/webapp/app/View/Course/adata_getlessoncount.ctp
+END
+adata_list_courses.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/ahaguru3/!svn/ver/349/trunk/webapp/app/View/Course/adata_list_courses.ctp
+END
+adata_batch.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Course/adata_batch.ctp
+END
+sdata_standard.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Course/sdata_standard.ctp
+END
+adata_courses.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Course/adata_courses.ctp
+END
+student_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Course/student_index.ctp
+END
+adata_edit.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Course/adata_edit.ctp
+END
+admin_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Course/admin_index.ctp
+END
+student_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/578/trunk/webapp/app/View/Course/student_view.ctp
+END
+adata_visibility.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ahaguru3/!svn/ver/246/trunk/webapp/app/View/Course/adata_visibility.ctp
+END
+adata_get_hinducourse.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/ahaguru3/!svn/ver/523/trunk/webapp/app/View/Course/adata_get_hinducourse.ctp
+END
+sdata_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Course/sdata_index.ctp
+END
+sdata_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Course/sdata_view.ctp
+END
+adata_student_buyable_courses.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Course/adata_student_buyable_courses.ctp
+END
+online_courses.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Course/online_courses.ctp
+END
+noactivecourse.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Course/noactivecourse.ctp
+END
+adata_course.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Course/adata_course.ctp
+END
+adata_standard.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Course/adata_standard.ctp
+END
+getcoursecode.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ahaguru3/!svn/ver/251/trunk/webapp/app/View/Course/getcoursecode.ctp
+END
+adata_addicon.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ahaguru3/!svn/ver/237/trunk/webapp/app/View/Course/adata_addicon.ctp
+END
+adata_delete.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Course/adata_delete.ctp
+END
+adata_types.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Course/adata_types.ctp
+END
+adata_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Course/adata_index.ctp
+END
+adata_add_course.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Course/adata_add_course.ctp
+END

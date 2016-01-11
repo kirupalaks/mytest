@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Teacher
+END
+confirm_payment.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ahaguru3/!svn/ver/272/trunk/webapp/app/View/Teacher/confirm_payment.ctp
+END
+adata_edit.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/277/trunk/webapp/app/View/Teacher/adata_edit.ctp
+END
+admin_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Teacher/admin_index.ctp
+END
+adata_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/269/trunk/webapp/app/View/Teacher/adata_index.ctp
+END
+adata_add.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ahaguru3/!svn/ver/269/trunk/webapp/app/View/Teacher/adata_add.ctp
+END
+syncdb.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/ahaguru3/!svn/ver/272/trunk/webapp/app/View/Teacher/syncdb.ctp
+END
+confirm_student.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ahaguru3/!svn/ver/271/trunk/webapp/app/View/Teacher/confirm_student.ctp
+END
+student_payment.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ahaguru3/!svn/ver/271/trunk/webapp/app/View/Teacher/student_payment.ctp
+END
+teacherlogin.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ahaguru3/!svn/ver/271/trunk/webapp/app/View/Teacher/teacherlogin.ctp
+END
+email.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/ahaguru3/!svn/ver/271/trunk/webapp/app/View/Teacher/email.ctp
+END
+login.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/ahaguru3/!svn/ver/271/trunk/webapp/app/View/Teacher/login.ctp
+END

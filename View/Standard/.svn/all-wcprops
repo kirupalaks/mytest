@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Standard
+END
+edit.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Standard/edit.ctp
+END
+index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Standard/index.ctp
+END
+add.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Standard/add.ctp
+END
+getall.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Standard/getall.ctp
+END
+adata_delete.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Standard/adata_delete.ctp
+END
+delete.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Standard/delete.ctp
+END

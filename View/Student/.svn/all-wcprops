@@ -1,0 +1,335 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/ahaguru3/!svn/ver/424/trunk/webapp/app/View/Student
+END
+mapped.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/ahaguru3/!svn/ver/240/trunk/webapp/app/View/Student/mapped.ctp
+END
+adata_relation.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_relation.ctp
+END
+adata_delete_stud_group.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_delete_stud_group.ctp
+END
+index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/index.ctp
+END
+student_cnpt_attempt.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/student_cnpt_attempt.ctp
+END
+adata_course_save.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_course_save.ctp
+END
+pdf.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/ahaguru3/!svn/ver/450/trunk/webapp/app/View/Student/pdf.ctp
+END
+admin_students_list.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/admin_students_list.ctp
+END
+adata_getstandards.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_getstandards.ctp
+END
+authorized.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/authorized.ctp
+END
+check_session.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ahaguru3/!svn/ver/365/trunk/webapp/app/View/Student/check_session.ctp
+END
+sdata_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/sdata_index.ctp
+END
+adata_get_stud_group.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_get_stud_group.ctp
+END
+register.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/ahaguru3/!svn/ver/240/trunk/webapp/app/View/Student/register.ctp
+END
+adata_deletedstudents.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_deletedstudents.ctp
+END
+sdata_subscribe.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/sdata_subscribe.ctp
+END
+save.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/ahaguru3/!svn/ver/240/trunk/webapp/app/View/Student/save.ctp
+END
+adata_search.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_search.ctp
+END
+adata_coursefilter.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_coursefilter.ctp
+END
+classroom.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ahaguru3/!svn/ver/373/trunk/webapp/app/View/Student/classroom.ctp
+END
+view_pdf.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/ahaguru3/!svn/ver/450/trunk/webapp/app/View/Student/view_pdf.ctp
+END
+adata_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_view.ctp
+END
+verify.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/verify.ctp
+END
+getall.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/ahaguru3/!svn/ver/248/trunk/webapp/app/View/Student/getall.ctp
+END
+hallticketform.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/ahaguru3/!svn/ver/669/trunk/webapp/app/View/Student/hallticketform.ctp
+END
+student_classroom.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/ahaguru3/!svn/ver/267/trunk/webapp/app/View/Student/student_classroom.ctp
+END
+adata_deletemapping.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/ahaguru3/!svn/ver/252/trunk/webapp/app/View/Student/adata_deletemapping.ctp
+END
+sdata_course_map.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/sdata_course_map.ctp
+END
+view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/ahaguru3/!svn/ver/239/trunk/webapp/app/View/Student/view.ctp
+END
+verify_email.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/verify_email.ctp
+END
+sdata_promo_courses.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/ahaguru3/!svn/ver/393/trunk/webapp/app/View/Student/sdata_promo_courses.ctp
+END
+books.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/ahaguru3/!svn/ver/424/trunk/webapp/app/View/Student/books.ctp
+END
+sdata_detail.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/sdata_detail.ctp
+END
+sdata_classroom.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ahaguru3/!svn/ver/259/trunk/webapp/app/View/Student/sdata_classroom.ctp
+END
+adata_edit.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_edit.ctp
+END
+adata_promo_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/ahaguru3/!svn/ver/326/trunk/webapp/app/View/Student/adata_promo_view.ctp
+END
+adata_getstd.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_getstd.ctp
+END
+edit.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/edit.ctp
+END
+adata_coupon_students.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/ahaguru3/!svn/ver/341/trunk/webapp/app/View/Student/adata_coupon_students.ctp
+END
+adata_delete_atten.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_delete_atten.ctp
+END
+adata_lessonview.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_lessonview.ctp
+END
+allcourse.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/allcourse.ctp
+END
+adata_course.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_course.ctp
+END
+adata_course_batch.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_course_batch.ctp
+END
+adata_inactive_batch .ctp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_inactive_batch%20.ctp
+END
+adata_add_stud_group.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_add_stud_group.ctp
+END
+student_allcourse.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/ahaguru3/!svn/ver/252/trunk/webapp/app/View/Student/student_allcourse.ctp
+END
+adata_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_index.ctp
+END
+sdata_edit.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/sdata_edit.ctp
+END
+progress.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/progress.ctp
+END
+adata_import.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_import.ctp
+END
+hallticketform_reg.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/ahaguru3/!svn/ver/450/trunk/webapp/app/View/Student/hallticketform_reg.ctp
+END
+adata_batch_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/adata_batch_view.ctp
+END
+sdata_allcourse.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Student/sdata_allcourse.ctp
+END
+viewpdf.php
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/ahaguru3/!svn/ver/450/trunk/webapp/app/View/Student/viewpdf.php
+END

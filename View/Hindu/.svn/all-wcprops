@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/ahaguru3/!svn/ver/418/trunk/webapp/app/View/Hindu
+END
+register_offline.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/ahaguru3/!svn/ver/402/trunk/webapp/app/View/Hindu/register_offline.ctp
+END
+admin_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ahaguru3/!svn/ver/398/trunk/webapp/app/View/Hindu/admin_index.ctp
+END
+verify_user.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ahaguru3/!svn/ver/402/trunk/webapp/app/View/Hindu/verify_user.ctp
+END
+delete_entry.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/418/trunk/webapp/app/View/Hindu/delete_entry.ctp
+END

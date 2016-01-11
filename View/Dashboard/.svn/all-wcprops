@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Dashboard
+END
+admin_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Dashboard/admin_index.ctp
+END
+adata_getnews.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Dashboard/adata_getnews.ctp
+END
+adata_news.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Dashboard/adata_news.ctp
+END
+puzzler_news.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/ahaguru3/!svn/ver/578/trunk/webapp/app/View/Dashboard/puzzler_news.ctp
+END
+adata_deletenews.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Dashboard/adata_deletenews.ctp
+END
+adata_get.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Dashboard/adata_get.ctp
+END
+adata_delete.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Dashboard/adata_delete.ctp
+END
+course_news.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ahaguru3/!svn/ver/578/trunk/webapp/app/View/Dashboard/course_news.ctp
+END

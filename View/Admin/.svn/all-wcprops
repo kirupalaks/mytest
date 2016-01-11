@@ -1,0 +1,161 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Admin
+END
+adata_import_downloaded.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/ahaguru3/!svn/ver/272/trunk/webapp/app/View/Admin/adata_import_downloaded.ctp
+END
+adata_import.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/adata_import.ctp
+END
+admin_group.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/admin_group.ctp
+END
+adata_delete_group.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/adata_delete_group.ctp
+END
+adata_get_stud.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/adata_get_stud.ctp
+END
+admin_course.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/admin_course.ctp
+END
+admin_smsprocess.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/admin_smsprocess.ctp
+END
+admin_sms.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Admin/admin_sms.ctp
+END
+admin_addstud_group.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/admin_addstud_group.ctp
+END
+adata_getslides.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/adata_getslides.ctp
+END
+admin_coursedetails.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/admin_coursedetails.ctp
+END
+admin_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Admin/admin_index.ctp
+END
+admin_changepassword.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/admin_changepassword.ctp
+END
+adata_get_group.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/adata_get_group.ctp
+END
+admin_sms_group.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Admin/admin_sms_group.ctp
+END
+admin_get_stud.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/admin_get_stud.ctp
+END
+admin_email_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/admin_email_index.ctp
+END
+admin_sms_templates.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Admin/admin_sms_templates.ctp
+END
+adata_checkpassword.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/adata_checkpassword.ctp
+END
+adata_group_edit.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/adata_group_edit.ctp
+END
+admin_edit_test.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/admin_edit_test.ctp
+END
+admid_course.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/admid_course.ctp
+END
+adata_deleteslides.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/adata_deleteslides.ctp
+END
+adata_coursedetails.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/adata_coursedetails.ctp
+END
+adata_import_puzz_subscription.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/ahaguru3/!svn/ver/663/trunk/webapp/app/View/Admin/adata_import_puzz_subscription.ctp
+END
+adata_changepassword.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Admin/adata_changepassword.ctp
+END

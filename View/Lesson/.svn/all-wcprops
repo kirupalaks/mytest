@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Lesson
+END
+admin_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Lesson/admin_view.ctp
+END
+adata_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Lesson/adata_view.ctp
+END
+adata_order.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Lesson/adata_order.ctp
+END
+sdata_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Lesson/sdata_view.ctp
+END
+adata_delete.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Lesson/adata_delete.ctp
+END
+adata_lesson.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Lesson/adata_lesson.ctp
+END
+adata_types.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Lesson/adata_types.ctp
+END
+admin_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Lesson/admin_index.ctp
+END
+student_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Lesson/student_view.ctp
+END
+adata_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Lesson/adata_index.ctp
+END

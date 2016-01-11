@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/ahaguru3/!svn/ver/477/trunk/webapp/app/View/Ahaforweek
+END
+student_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ahaguru3/!svn/ver/477/trunk/webapp/app/View/Ahaforweek/student_view.ctp
+END
+sdata_concept_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/ahaguru3/!svn/ver/477/trunk/webapp/app/View/Ahaforweek/sdata_concept_view.ctp
+END
+student_taketest_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/ahaguru3/!svn/ver/477/trunk/webapp/app/View/Ahaforweek/student_taketest_view.ctp
+END
+sdata_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ahaguru3/!svn/ver/477/trunk/webapp/app/View/Ahaforweek/sdata_view.ctp
+END
+student_exercise_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/ahaguru3/!svn/ver/620/trunk/webapp/app/View/Ahaforweek/student_exercise_view.ctp
+END
+sdata_taketest_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/ahaguru3/!svn/ver/477/trunk/webapp/app/View/Ahaforweek/sdata_taketest_view.ctp
+END
+student_concept_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/ahaguru3/!svn/ver/477/trunk/webapp/app/View/Ahaforweek/student_concept_view.ctp
+END
+sdata_exercise_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/ahaguru3/!svn/ver/477/trunk/webapp/app/View/Ahaforweek/sdata_exercise_view.ctp
+END

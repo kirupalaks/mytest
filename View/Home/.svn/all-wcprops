@@ -1,0 +1,275 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/ahaguru3/!svn/ver/429/trunk/webapp/app/View/Home
+END
+get_user_by_id.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/401/trunk/webapp/app/View/Home/get_user_by_id.ctp
+END
+stud_register.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/240/trunk/webapp/app/View/Home/stud_register.ctp
+END
+register.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/ahaguru3/!svn/ver/239/trunk/webapp/app/View/Home/register.ctp
+END
+quiz.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/ahaguru3/!svn/ver/312/trunk/webapp/app/View/Home/quiz.ctp
+END
+hinduresults.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ahaguru3/!svn/ver/477/trunk/webapp/app/View/Home/hinduresults.ctp
+END
+coupon_login.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ahaguru3/!svn/ver/252/trunk/webapp/app/View/Home/coupon_login.ctp
+END
+hregister.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/ahaguru3/!svn/ver/355/trunk/webapp/app/View/Home/hregister.ctp
+END
+enquiry.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/ahaguru3/!svn/ver/238/trunk/webapp/app/View/Home/enquiry.ctp
+END
+signup_success.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/349/trunk/webapp/app/View/Home/signup_success.ctp
+END
+how.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Home/how.ctp
+END
+login_success.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/329/trunk/webapp/app/View/Home/login_success.ctp
+END
+hindu_registration.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ahaguru3/!svn/ver/412/trunk/webapp/app/View/Home/hindu_registration.ctp
+END
+hloginsubmit.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ahaguru3/!svn/ver/371/trunk/webapp/app/View/Home/hloginsubmit.ctp
+END
+classroom_register.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ahaguru3/!svn/ver/267/trunk/webapp/app/View/Home/classroom_register.ctp
+END
+index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/ahaguru3/!svn/ver/620/trunk/webapp/app/View/Home/index.ctp
+END
+hlogin_success.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/504/trunk/webapp/app/View/Home/hlogin_success.ctp
+END
+thehindu.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/ahaguru3/!svn/ver/558/trunk/webapp/app/View/Home/thehindu.ctp
+END
+trmsandcon.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/ahaguru3/!svn/ver/477/trunk/webapp/app/View/Home/trmsandcon.ctp
+END
+hloginsuccess.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/361/trunk/webapp/app/View/Home/hloginsuccess.ctp
+END
+forgotpwd.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/ahaguru3/!svn/ver/239/trunk/webapp/app/View/Home/forgotpwd.ctp
+END
+photos.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/ahaguru3/!svn/ver/238/trunk/webapp/app/View/Home/photos.ctp
+END
+register_success.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ahaguru3/!svn/ver/477/trunk/webapp/app/View/Home/register_success.ctp
+END
+embed.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Home/embed.ctp
+END
+online.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/ahaguru3/!svn/ver/558/trunk/webapp/app/View/Home/online.ctp
+END
+getUserById.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/ahaguru3/!svn/ver/401/trunk/webapp/app/View/Home/getUserById.ctp
+END
+getUser
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/ahaguru3/!svn/ver/402/trunk/webapp/app/View/Home/getUser
+END
+sessionvariable.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ahaguru3/!svn/ver/361/trunk/webapp/app/View/Home/sessionvariable.ctp
+END
+login1.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Home/login1.ctp
+END
+who.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Home/who.ctp
+END
+resetpwd.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Home/resetpwd.ctp
+END
+checkcoupon.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/ahaguru3/!svn/ver/248/trunk/webapp/app/View/Home/checkcoupon.ctp
+END
+relationship.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ahaguru3/!svn/ver/240/trunk/webapp/app/View/Home/relationship.ctp
+END
+classroom.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/ahaguru3/!svn/ver/620/trunk/webapp/app/View/Home/classroom.ctp
+END
+what.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Home/what.ctp
+END
+payment_success.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ahaguru3/!svn/ver/504/trunk/webapp/app/View/Home/payment_success.ctp
+END
+register1.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/ahaguru3/!svn/ver/238/trunk/webapp/app/View/Home/register1.ctp
+END
+why.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Home/why.ctp
+END
+login.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Home/login.ctp
+END
+disclaimer.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/ahaguru3/!svn/ver/271/trunk/webapp/app/View/Home/disclaimer.ctp
+END
+hsignup.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/ahaguru3/!svn/ver/412/trunk/webapp/app/View/Home/hsignup.ctp
+END
+books.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/ahaguru3/!svn/ver/620/trunk/webapp/app/View/Home/books.ctp
+END
+privacy.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/ahaguru3/!svn/ver/477/trunk/webapp/app/View/Home/privacy.ctp
+END
+getuser.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Home/getuser.ctp
+END
+getall_school.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/658/trunk/webapp/app/View/Home/getall_school.ctp
+END
+hlogin.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/ahaguru3/!svn/ver/412/trunk/webapp/app/View/Home/hlogin.ctp
+END

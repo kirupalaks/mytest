@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Element
+END
+adata_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Element/adata_view.ctp
+END
+index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Element/index.ctp
+END
+adata_delete.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Element/adata_delete.ctp
+END
+adata_edit.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Element/adata_edit.ctp
+END
+admin_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Element/admin_index.ctp
+END
+adata_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Element/adata_index.ctp
+END
+adata_add.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Element/adata_add.ctp
+END
+admin_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Element/admin_view.ctp
+END

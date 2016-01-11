@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Puzzler
+END
+sdata_class.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Puzzler/sdata_class.ctp
+END
+sdata_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Puzzler/sdata_view.ctp
+END
+student_quiz_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Puzzler/student_quiz_view.ctp
+END
+adata_delete.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Puzzler/adata_delete.ctp
+END
+admin_edit.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/340/trunk/webapp/app/View/Puzzler/admin_edit.ctp
+END
+sdata_quiz_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Puzzler/sdata_quiz_view.ctp
+END
+adata_class.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Puzzler/adata_class.ctp
+END
+adata_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Puzzler/adata_index.ctp
+END
+adata_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Puzzler/adata_view.ctp
+END
+adata_remove_slide.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Puzzler/adata_remove_slide.ctp
+END
+student_game_view.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Puzzler/student_game_view.ctp
+END
+student_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Puzzler/student_index.ctp
+END
+guest_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Puzzler/guest_index.ctp
+END
+admin_index.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Puzzler/admin_index.ctp
+END
+adata_edit.ctp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/ahaguru3/!svn/ver/232/trunk/webapp/app/View/Puzzler/adata_edit.ctp
+END
